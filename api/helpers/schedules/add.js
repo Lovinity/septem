@@ -17,6 +17,8 @@ module.exports = {
 
 
   fn: async function (inputs) {
+    var schedule = require('node-schedule');
+
     // Skip tasks that do not exist
     if (typeof sails.helpers.tasks === 'undefined' || typeof sails.helpers.tasks[ inputs.record.task ] === 'undefined') return;
 

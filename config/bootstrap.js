@@ -52,7 +52,6 @@ module.exports.bootstrap = async function () {
   */
 
   // Initialize cron schedules
-  var schedule = require('node-schedule');
   ModelCache.scheduleCrons = {};
   for (var record in ModelCache.schedules) {
     if (Object.prototype.hasOwnProperty.call(ModelCache.schedules, record)) {
