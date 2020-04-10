@@ -9,13 +9,55 @@
  * https://sailsjs.com/config/bootstrap
  */
 
-module.exports.bootstrap = async function() {
+// Globals
+global[ 'moment' ] = require('moment');
+global[ 'ModelCache' ] = {};
 
-  // Initialize Discord
-  sails.config.custom.discord.client = new Discord.Client(sails.config.custom.discord.clientOptions);
-  sails.config.custom.discord.client.once('ready', () => {
-    sails.log.debug('Discord Ready!');
+module.exports.bootstrap = async function () {
+
+  /*
+      Initialize CACHE
+  */
+  var records = await sails.models.schedules.find();
+  ModelCache.schedules = {};
+  records.forEach(async (record) => {
+    ModelCache.schedules[ record.ID ] = record;
   });
-  sails.config.custom.discord.client.login(sails.config.custom.discord.token);
+
+
+  /*
+  *    DISCORD
+  */
+
+  // Load Discord globals and initialize Discord client
+  global[ 'Discord' ] = require('discord.js');
+  global[ 'DiscordClient' ] = new Discord.Client(sails.config.custom.discord.clientOptions);
+
+  // Initialize DiscordClient event handlers
+  if (sails.helpers.events) {
+    for (var event in sails.helpers.events) {
+      if (Object.prototype.hasOwnProperty.call(sails.helpers.events, event)) {
+        DiscordClient.on(event, async (...args) => {
+          await sails.helpers.events[ event ](...args);
+        })
+      }
+    }
+  }
+
+  // Start the Discord bot
+  DiscordClient.login(sails.config.custom.discord.token);
+
+  /*
+      SCHEDULES
+  */
+
+  // Initialize cron schedules
+  var schedule = require('node-schedule');
+  ModelCache.scheduleCrons = {};
+  for (var record in ModelCache.schedules) {
+    if (Object.prototype.hasOwnProperty.call(ModelCache.schedules, record)) {
+      await sails.helpers.schedules.add(ModelCache.schedules[ record ]);
+    }
+  }
 
 };
