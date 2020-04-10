@@ -37,9 +37,20 @@ module.exports.bootstrap = async function () {
   if (sails.helpers.events) {
     for (var event in sails.helpers.events) {
       if (Object.prototype.hasOwnProperty.call(sails.helpers.events, event)) {
-        DiscordClient.on(event, async (...args) => {
-          await sails.helpers.events[ event ](...args);
-        })
+
+        // Needs to be in a self-calling function to provide the proper value of event
+        (async (event2) => {
+          if ([ 'ready' ].indexOf(event2) !== -1) {
+            DiscordClient.once(event2, async (...args) => {
+              await sails.helpers.events[ event2 ](...args);
+            })
+          } else {
+            DiscordClient.on(event2, async (...args) => {
+              await sails.helpers.events[ event2 ](...args);
+            })
+          }
+        })(event);
+        
       }
     }
   }

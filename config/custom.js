@@ -20,5 +20,5 @@ module.exports.custom = {
     token: `` // Specify in local.js
   },
 
-  baseURL: `https://discord.septem-regiones.fun`
+  baseURL: `https://example.com` // Base URL for the REST API
 };
