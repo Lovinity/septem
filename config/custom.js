@@ -17,6 +17,13 @@ module.exports.custom = {
       fetchAllMembers: true,
       partials: [ 'USER', 'MESSAGE', 'CHANNEL', 'GUILD_MEMBER', 'REACTION' ],
     },
+    regex: {
+      userOrMember: /^(?:<@!?)?(\d{17,19})>?$/,
+      channel: /^(?:<#)?(\d{17,19})>?$/,
+      emoji: /^(?:<a?:\w{2,32}:)?(\d{17,19})>?$/,
+      role: /^(?:<@&)?(\d{17,19})>?$/,
+      snowflake: /^(\d{17,19})$/
+    },
     defaultPrefix: `sr!`,
     token: ``, // Bot user token
     clientOwner: `` // Snowflake ID of the bot owner
