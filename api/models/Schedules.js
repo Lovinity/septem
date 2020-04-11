@@ -75,7 +75,7 @@ module.exports = {
   },
 
   afterDestroy: function (destroyedRecord, proceed) {
-    var data = { remove: destroyedRecord.ID }
+    var data = { remove: destroyedRecord.id }
     sails.sockets.broadcast('schedules', 'schedules', data)
     delete ModelCache.schedules[ destroyedRecord.uid ];
 

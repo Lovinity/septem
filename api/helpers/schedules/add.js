@@ -23,13 +23,18 @@ module.exports = {
     if (typeof sails.helpers.tasks === 'undefined' || typeof sails.helpers.tasks[ inputs.record.task ] === 'undefined') return;
 
     // Unschedule existing schedule if applicable
-    if (typeof ModelCache.scheduleCrons[inputs.record.ID] !== undefined) {
-      ModelCache.scheduleCrons[inputs.record.ID].cancel();
+    if (typeof ModelCache.scheduleCrons[ inputs.record.id ] !== undefined) {
+      ModelCache.scheduleCrons[ inputs.record.id ].cancel();
     }
 
     // Tasks that have a one-time run
     if (inputs.record.nextRun && !inputs.record.cron) {
-      ModelCache.scheduleCrons[inputs.record.ID] = schedule.scheduleJob(moment(inputs.record.nextRun).toDate(), async () => await sails.helpers.tasks[ inputs.record.task ].with(inputs.record.data || {}));
+      ModelCache.scheduleCrons[ inputs.record.id ] = schedule.scheduleJob(moment(inputs.record.nextRun).toDate(), async () => {
+        await sails.helpers.tasks[ inputs.record.task ].with(inputs.record.data || {});
+
+        // Destroy the one-time schedule
+        await sails.models.schedules.destroy({ ID: inputs.record.id }).fetch();
+      });
 
       // Tasks that have a cron recurrence
     } else if (inputs.record.cron) {
@@ -37,7 +42,12 @@ module.exports = {
       if (inputs.record.catchUp) {
         options.start = moment(inputs.record.nextRun || inputs.record.lastRun).toDate();
       }
-      ModelCache.scheduleCrons[inputs.record.ID] = schedule.scheduleJob(options, async () => await sails.helpers.tasks[ inputs.record.task ].with(inputs.record.data || {}));
+      ModelCache.scheduleCrons[ inputs.record.id ] = schedule.scheduleJob(options, async () => {
+        await sails.helpers.tasks[ inputs.record.task ].with(inputs.record.data || {});
+
+        // Update lastRun
+        await sails.models.schedules.update({ ID: inputs.record.id }, { lastRun: moment().toISOString(true) }).fetch();
+      });
     }
   }
 

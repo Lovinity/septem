@@ -25,6 +25,10 @@ module.exports.bootstrap = async function () {
   records.forEach(async (record) => {
     ModelCache.schedules[ record.uid ] = record;
   });
+  // Create a guild task schedule to run on all guilds every minute if it does not already exist
+  if (sails.helpers.tasks && sails.helpers.tasks.guild) {
+    await sails.models.schedules.findOrCreate({uid: 'SYS-TASK', task: 'guild'}, {uid: 'SYS-TASK', task: 'guild', cron: '* * * * *'});
+  }
 
   // guilds
   var records = await sails.models.guilds.find();
@@ -38,6 +42,13 @@ module.exports.bootstrap = async function () {
   ModelCache.channels = {};
   records.forEach(async (record) => {
     ModelCache.channels[ record.channelID ] = record;
+  });
+
+  // roles
+  var records = await sails.models.roles.find();
+  ModelCache.roles = {};
+  records.forEach(async (record) => {
+    ModelCache.roles[ record.roleID ] = record;
   });
 
   /*
