@@ -27,6 +27,19 @@ module.exports = {
     }
 
     // TODO: Check for a command
+    var prefix = ModelCache.guilds[ inputs.message.guild.id ].prefix || sails.config.custom.discord.defaultPrefix;
+    var command;
+    var commandParts;
+    if (inputs.message.content.startsWith(prefix)) {
+      commandParts = inputs.message.content.replace(prefix, '').split(" | ");
+      command = commandParts[ 0 ];
+      if (typeof sails.helpers.commands !== 'undefined' && typeof sails.helpers.commands[ command ] !== 'undefined') {
+        commandParts = commandParts.splice(0, 1);
+        inputs.message.reply(await sails.helpers.commands[ command ](...commandParts));
+      } else {
+        inputs.message.reply(':x: Sorry, but that command does not exist');
+      }
+    }
   }
 
 
