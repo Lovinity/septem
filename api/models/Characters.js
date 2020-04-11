@@ -26,6 +26,12 @@ module.exports = {
       required: true
     },
 
+    image: {
+      type: 'string',
+      allowNull: true,
+      description: 'image name of the character if an image was provided.'
+    },
+
     type: {
       type: 'string',
       isIn: ['Earth', 'LM', 'Earth NPC', 'LM NPC'],
@@ -134,6 +140,13 @@ module.exports = {
       min: 0,
       defaultsTo: 25,
       description: 'Energy points. Determines how much energy the character has to run or use energy-based spells/attacks.'
+    },
+
+    SP: {
+      type: 'number',
+      min: 0,
+      defaultsTo: 25,
+      description: 'Source code points, which requiem is trying to steal away from the character throughout the campaign to grow stronger.'
     }
 
   },

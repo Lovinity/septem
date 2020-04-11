@@ -131,6 +131,15 @@ module.exports.bootstrap = async function () {
     ModelCache.guilds[ record.guildID ].badges[ record.uid ] = record;
   });
 
+  // RP sessions
+  var records = await sails.models.sessions.find();
+  records.forEach(async (record) => {
+    if (typeof ModelCache.guilds[ record.guildID ].sessions === 'undefined') {
+      ModelCache.guilds[ record.guildID ].sessions = {};
+    }
+    ModelCache.guilds[ record.guildID ].sessions[ record.ID ] = record;
+  });
+
   /*
   *    DISCORD
   */
