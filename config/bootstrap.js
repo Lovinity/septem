@@ -19,6 +19,8 @@ module.exports.bootstrap = async function () {
       Load data into cache
   */
 
+  // TODO: Develop more effective caching system that only loads what is necessary (eg. don't load data of members not in respective guild).
+
   // schedules
   var records = await sails.models.schedules.find();
   ModelCache.schedules = {};
@@ -46,7 +48,6 @@ module.exports.bootstrap = async function () {
 
   // members
   var records = await sails.models.members.find();
-  ModelCache.members = {};
   records.forEach(async (record) => {
     if (typeof ModelCache.guilds[ record.guildID ].members === 'undefined') {
       ModelCache.guilds[ record.guildID ].members = {};
@@ -54,9 +55,35 @@ module.exports.bootstrap = async function () {
     ModelCache.guilds[ record.guildID ].members[ record.userID ] = record;
   });
 
+  // Member profiles
+  var records = await sails.models.profiles.find();
+  records.forEach(async (record) => {
+    if (typeof ModelCache.guilds[ record.guildID ].members === 'undefined') {
+      ModelCache.guilds[ record.guildID ].members = {};
+    }
+    if (typeof ModelCache.guilds[ record.guildID ].members[ record.userID ] === 'undefined') {
+      ModelCache.guilds[ record.guildID ].members[ record.userID ] = {};
+    }
+    ModelCache.guilds[ record.guildID ].members[ record.userID ].profile = record;
+  });
+
+  // Member moderation logs
+  var records = await sails.models.moderation.find();
+  records.forEach(async (record) => {
+    if (typeof ModelCache.guilds[ record.guildID ].members === 'undefined') {
+      ModelCache.guilds[ record.guildID ].members = {};
+    }
+    if (typeof ModelCache.guilds[ record.guildID ].members[ record.userID ] === 'undefined') {
+      ModelCache.guilds[ record.guildID ].members[ record.userID ] = {};
+    }
+    if (typeof ModelCache.guilds[ record.guildID ].members[ record.userID ].moderation === 'undefined') {
+      ModelCache.guilds[ record.guildID ].members[ record.userID ].moderation = {};
+    }
+    ModelCache.guilds[ record.guildID ].members[ record.userID ].moderation[ record.case ] = record;
+  });
+
   // roles
   var records = await sails.models.roles.find();
-  ModelCache.roles = {};
   records.forEach(async (record) => {
     if (typeof ModelCache.guilds[ record.guildID ].roles === 'undefined') {
       ModelCache.guilds[ record.guildID ].roles = {};
@@ -73,7 +100,6 @@ module.exports.bootstrap = async function () {
 
   // Ads
   var records = await sails.models.ads.find();
-  ModelCache.ads = {};
   records.forEach(async (record) => {
     if (typeof ModelCache.guilds[ record.guildID ].ads === 'undefined') {
       ModelCache.guilds[ record.guildID ].ads = {};
@@ -81,14 +107,13 @@ module.exports.bootstrap = async function () {
     ModelCache.guilds[ record.guildID ].ads[ record.uid ] = record;
   });
 
-  // members
-  var records = await sails.models.members.find();
-  ModelCache.members = {};
+  // badges
+  var records = await sails.models.badges.find();
   records.forEach(async (record) => {
-    if (typeof ModelCache.guilds[ record.guildID ].members === 'undefined') {
-      ModelCache.guilds[ record.guildID ].members = {};
+    if (typeof ModelCache.guilds[ record.guildID ].badges === 'undefined') {
+      ModelCache.guilds[ record.guildID ].badges = {};
     }
-    ModelCache.guilds[ record.guildID ].members[ record.uid ] = record;
+    ModelCache.guilds[ record.guildID ].badges[ record.uid ] = record;
   });
 
   /*

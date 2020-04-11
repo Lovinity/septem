@@ -77,11 +77,10 @@ module.exports = {
       description: 'The last date/time this member used the rep command.'
     },
 
-    muted: {
-      type: 'boolean',
-      defaultsTo: false,
-      description: 'Whether or not this member is supposed to be muted'
-    },
+    // TODO: for mute detection, use moderation log checking and the presence of an investigation channel.
+    // When staff remove the mute role and a member still has a mute, re-add mute role and ping staff in a logs channel.
+    // Do NOT do same behavior when staff add the mute role.
+    // ...but also ping staff if bot removes mute role after having rebooted.
 
     reports: {
       type: 'json',
@@ -91,6 +90,11 @@ module.exports = {
     roles: {
       type: 'json',
       description: 'Array of role IDs assigned to this member.'
+    },
+
+    badges: {
+      type: 'json',
+      description: 'Array of objects of badges earned by the member: {id: badge uid, acquired: date/time earned}.'
     }
 
   },
