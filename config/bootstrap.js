@@ -82,6 +82,21 @@ module.exports.bootstrap = async function () {
     ModelCache.guilds[ record.guildID ].members[ record.userID ].moderation[ record.case ] = record;
   });
 
+  // Member role play characters
+  var records = await sails.models.characters.find();
+  records.forEach(async (record) => {
+    if (typeof ModelCache.guilds[ record.guildID ].members === 'undefined') {
+      ModelCache.guilds[ record.guildID ].members = {};
+    }
+    if (typeof ModelCache.guilds[ record.guildID ].members[ record.userID ] === 'undefined') {
+      ModelCache.guilds[ record.guildID ].members[ record.userID ] = {};
+    }
+    if (typeof ModelCache.guilds[ record.guildID ].members[ record.userID ].characters === 'undefined') {
+      ModelCache.guilds[ record.guildID ].members[ record.userID ].characters = {};
+    }
+    ModelCache.guilds[ record.guildID ].members[ record.userID ].characters[ record.ID ] = record;
+  });
+
   // roles
   var records = await sails.models.roles.find();
   records.forEach(async (record) => {

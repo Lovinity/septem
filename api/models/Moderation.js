@@ -165,7 +165,13 @@ module.exports = {
       type: 'ref',
       columnType: 'datetime',
       description: 'If this member is to be banned, the date/time the ban expires. Use the year 3000 for indefinite / permanent.'
-    }
+    },
+
+    additionalInformation: {
+      type: 'string',
+      maxLength: 1024,
+      description: 'Additional information, such as other discipline issued.'
+    },
 
   },
 
