@@ -44,6 +44,16 @@ module.exports.bootstrap = async function () {
     ModelCache.channels[ record.channelID ] = record;
   });
 
+  // members
+  var records = await sails.models.members.find();
+  ModelCache.members = {};
+  records.forEach(async (record) => {
+    if (typeof ModelCache.guilds[ record.guildID ].members === 'undefined') {
+      ModelCache.guilds[ record.guildID ].members = {};
+    }
+    ModelCache.guilds[ record.guildID ].members[ record.userID ] = record;
+  });
+
   // roles
   var records = await sails.models.roles.find();
   ModelCache.roles = {};
@@ -71,14 +81,14 @@ module.exports.bootstrap = async function () {
     ModelCache.guilds[ record.guildID ].ads[ record.uid ] = record;
   });
 
-  // badges
-  var records = await sails.models.badges.find();
-  ModelCache.badges = {};
+  // members
+  var records = await sails.models.members.find();
+  ModelCache.members = {};
   records.forEach(async (record) => {
-    if (typeof ModelCache.guilds[ record.guildID ].badges === 'undefined') {
-      ModelCache.guilds[ record.guildID ].badges = {};
+    if (typeof ModelCache.guilds[ record.guildID ].members === 'undefined') {
+      ModelCache.guilds[ record.guildID ].members = {};
     }
-    ModelCache.guilds[ record.guildID ].badges[ record.uid ] = record;
+    ModelCache.guilds[ record.guildID ].members[ record.uid ] = record;
   });
 
   /*

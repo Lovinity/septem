@@ -30,7 +30,7 @@ module.exports = {
       allowNull: true
     },
 
-    yangPrice: {
+    price: {
       type: 'number',
       min: 0,
       allowNull: true

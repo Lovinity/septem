@@ -43,7 +43,7 @@ module.exports = {
     botGamesChannel: {
       type: 'string',
       allowNull: true,
-      description: 'The channel ID used for posting routine bot games to play for Yang.'
+      description: 'The channel ID used for posting routine bot games to play for credits.'
     },
 
     modLogChannel: {
@@ -246,7 +246,7 @@ module.exports = {
       sails.sockets.broadcast('guilds', 'guilds', data)
       ModelCache.guilds[ newlyCreatedRecord.guildID ] = newlyCreatedRecord;
 
-      // Create Yang store
+      // Create store
       await sails.models.store.findOrCreate({guildID: newlyCreatedRecord.guildID}, {guildID: newlyCreatedRecord.guildID});
   
       return proceed()
@@ -265,7 +265,7 @@ module.exports = {
       sails.sockets.broadcast('guilds', 'guilds', data)
       delete ModelCache.guilds[ destroyedRecord.guildID ];
 
-      // Destroy Yang store
+      // Destroy store
       await sails.models.store.destroy({guildID: destroyedRecord.guildID}).fetch();
   
       return proceed()

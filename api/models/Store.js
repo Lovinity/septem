@@ -1,7 +1,7 @@
 /**
  * Store.js
  *
- * @description :: A list of guilds and their Yang store settings.
+ * @description :: A list of guilds and their store settings.
  * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
  */
 

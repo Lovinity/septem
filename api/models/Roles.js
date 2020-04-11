@@ -27,6 +27,18 @@ module.exports = {
       description: 'Set to true if members with this role should have less spamScore added to them. If the member has multiple lessStrict roles, they do NOT compound.'
     },
 
+    selfRoleCategory: {
+      type: 'string',
+      allowNull: true,
+      description: 'If this role can be self-assigned, name of the category of roles this falls in.'
+    },
+
+    selfReaction: {
+      type: 'string',
+      allowNull: true,
+      description: 'If this role can be self-assigned, ID of the emoji to use for the reaction. Must not share the same emoji with another role in the same category.'
+    },
+
   },
 
   // Websockets and cache standards
