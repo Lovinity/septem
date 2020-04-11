@@ -16,14 +16,29 @@ global[ 'ModelCache' ] = {};
 module.exports.bootstrap = async function () {
 
   /*
-      Initialize CACHE
+      Load data into cache
   */
+
+  // schedules
   var records = await sails.models.schedules.find();
   ModelCache.schedules = {};
   records.forEach(async (record) => {
-    ModelCache.schedules[ record.ID ] = record;
+    ModelCache.schedules[ record.uid ] = record;
   });
 
+  // guilds
+  var records = await sails.models.guilds.find();
+  ModelCache.guilds = {};
+  records.forEach(async (record) => {
+    ModelCache.guilds[ record.guildID ] = record;
+  });
+
+  // channels
+  var records = await sails.models.channels.find();
+  ModelCache.channels = {};
+  records.forEach(async (record) => {
+    ModelCache.channels[ record.channelID ] = record;
+  });
 
   /*
   *    DISCORD

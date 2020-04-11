@@ -51,7 +51,7 @@ module.exports = {
   afterCreate: function (newlyCreatedRecord, proceed) {
     var data = { insert: newlyCreatedRecord }
     sails.sockets.broadcast('schedules', 'schedules', data)
-    ModelCache.schedules[ newlyCreatedRecord.ID ] = newlyCreatedRecord;
+    ModelCache.schedules[ newlyCreatedRecord.uid ] = newlyCreatedRecord;
 
     // Schedule the new schedule in cron
     (async () => {
@@ -64,7 +64,7 @@ module.exports = {
   afterUpdate: function (updatedRecord, proceed) {
     var data = { update: updatedRecord }
     sails.sockets.broadcast('schedules', 'schedules', data)
-    ModelCache.schedules[ updatedRecord.ID ] = updatedRecord;
+    ModelCache.schedules[ updatedRecord.uid ] = updatedRecord;
 
     // Re-schedule the schedule in cron
     (async () => {
@@ -77,7 +77,7 @@ module.exports = {
   afterDestroy: function (destroyedRecord, proceed) {
     var data = { remove: destroyedRecord.ID }
     sails.sockets.broadcast('schedules', 'schedules', data)
-    delete ModelCache.schedules[ destroyedRecord.ID ];
+    delete ModelCache.schedules[ destroyedRecord.uid ];
 
     // Remove the schedule from cron
     (async () => {

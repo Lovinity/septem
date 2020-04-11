@@ -1,7 +1,7 @@
 module.exports = {
 
 
-  friendlyName: 'schedules.remove',
+  friendlyName: 'sails.helpers.schedules.remove',
 
 
   description: 'Remove a schedule.',

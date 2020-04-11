@@ -17,7 +17,9 @@ module.exports.custom = {
       fetchAllMembers: true,
       partials: [ 'USER', 'MESSAGE', 'CHANNEL', 'GUILD_MEMBER', 'REACTION' ],
     },
-    token: `` // Specify in local.js
+    defaultPrefix: `sr!`,
+    token: ``, // Bot user token
+    clientOwner: `` // Snowflake ID of the bot owner
   },
 
   baseURL: `https://example.com` // Base URL for the REST API

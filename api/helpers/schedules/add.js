@@ -1,7 +1,7 @@
 module.exports = {
 
 
-  friendlyName: 'schedules.add',
+  friendlyName: 'sails.helpers.schedules.add',
 
 
   description: 'Schedule a cron job to cache.',
