@@ -35,7 +35,7 @@ module.exports = {
       command = commandParts[ 0 ];
       sails.log.debug(`Discord: command executed: ${command}, by ${inputs.message.author.tag}`);
       if (typeof sails.helpers.commands !== 'undefined' && typeof sails.helpers.commands[ command ] !== 'undefined') {
-        commandParts.splice(0, 1);
+        commandParts[ 0 ] = inputs.message;
         try {
           inputs.message.reply(await sails.helpers.commands[ command ](...commandParts));
         } catch (e) {

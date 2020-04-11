@@ -8,6 +8,10 @@ module.exports = {
 
 
   inputs: {
+    message: {
+      type: 'ref',
+      required: true
+    },
     stuff: {
       type: 'string',
       required: true
@@ -16,7 +20,7 @@ module.exports = {
 
 
   fn: async function (inputs) {
-    var channel = await sails.helpers.resolvers.channel(inputs.stuff);
+    var channel = await sails.helpers.resolvers.rolename(inputs.message, inputs.stuff);
     return channel.name;
   }
 

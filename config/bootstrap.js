@@ -146,6 +146,7 @@ module.exports.bootstrap = async function () {
 
   // Load Discord globals and initialize Discord client
   global[ 'Discord' ] = require('discord.js');
+  Discord.DiscordMenu = require('../util/DiscordMenu');
   global[ 'DiscordClient' ] = new Discord.Client(sails.config.custom.discord.clientOptions);
 
   // Initialize DiscordClient event handlers
