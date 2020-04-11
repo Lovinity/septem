@@ -20,7 +20,7 @@ module.exports = {
 
 
   fn: async function (inputs) {
-    var channel = await sails.helpers.resolvers.rolename(inputs.message, inputs.stuff);
+    var channel = await sails.helpers.resolvers.username(inputs.message, inputs.stuff);
     return channel.name;
   }
 
