@@ -1,7 +1,7 @@
 /**
  * Roles.js
  *
- * @description :: A model definition represents a database table/collection.
+ * @description :: A list of Discord roles and their settings.
  * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
  */
 
@@ -33,7 +33,10 @@ module.exports = {
   afterCreate: function (newlyCreatedRecord, proceed) {
     var data = { insert: newlyCreatedRecord }
     sails.sockets.broadcast('roles', 'roles', data)
-    ModelCache.roles[ newlyCreatedRecord.roleID ] = newlyCreatedRecord;
+    if (typeof ModelCache.guilds[ newlyCreatedRecord.guildID ].roles === 'undefined') {
+      ModelCache.guilds[ newlyCreatedRecord.guildID ].roles = {};
+    }
+    ModelCache.guilds[ newlyCreatedRecord.guildID ].roles[ newlyCreatedRecord.roleID ] = newlyCreatedRecord;
 
     return proceed()
   },
@@ -41,7 +44,10 @@ module.exports = {
   afterUpdate: function (updatedRecord, proceed) {
     var data = { update: updatedRecord }
     sails.sockets.broadcast('roles', 'roles', data)
-    ModelCache.roles[ updatedRecord.roleID ] = updatedRecord;
+    if (typeof ModelCache.guilds[ updatedRecord.guildID ].roles === 'undefined') {
+      ModelCache.guilds[ updatedRecord.guildID ].roles = {};
+    }
+    ModelCache.guilds[ updatedRecord.guildID ].roles[ updatedRecord.roleID ] = updatedRecord;
 
     return proceed()
   },
@@ -49,7 +55,10 @@ module.exports = {
   afterDestroy: function (destroyedRecord, proceed) {
     var data = { remove: destroyedRecord.id }
     sails.sockets.broadcast('roles', 'roles', data)
-    delete ModelCache.roles[ destroyedRecord.roleID ];
+    if (typeof ModelCache.guilds[ destroyedRecord.guildID ].roles === 'undefined') {
+      ModelCache.guilds[ destroyedRecord.guildID ].roles = {};
+    }
+    delete ModelCache.guilds[ destroyedRecord.guildID ].roles[ destroyedRecord.roleID ];
 
     return proceed()
   }

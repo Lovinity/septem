@@ -27,7 +27,7 @@ module.exports.bootstrap = async function () {
   });
   // Create a guild task schedule to run on all guilds every minute if it does not already exist
   if (sails.helpers.tasks && sails.helpers.tasks.guild) {
-    await sails.models.schedules.findOrCreate({uid: 'SYS-TASK', task: 'guild'}, {uid: 'SYS-TASK', task: 'guild', cron: '* * * * *'});
+    await sails.models.schedules.findOrCreate({ uid: 'SYS-TASK', task: 'guild' }, { uid: 'SYS-TASK', task: 'guild', cron: '* * * * *' });
   }
 
   // guilds
@@ -48,7 +48,37 @@ module.exports.bootstrap = async function () {
   var records = await sails.models.roles.find();
   ModelCache.roles = {};
   records.forEach(async (record) => {
-    ModelCache.roles[ record.roleID ] = record;
+    if (typeof ModelCache.guilds[ record.guildID ].roles === 'undefined') {
+      ModelCache.guilds[ record.guildID ].roles = {};
+    }
+    ModelCache.guilds[ record.guildID ].roles[ record.roleID ] = record;
+  });
+
+  // store
+  var records = await sails.models.store.find();
+  ModelCache.store = {};
+  records.forEach(async (record) => {
+    ModelCache.store[ record.guildID ] = record;
+  });
+
+  // Ads
+  var records = await sails.models.ads.find();
+  ModelCache.ads = {};
+  records.forEach(async (record) => {
+    if (typeof ModelCache.guilds[ record.guildID ].ads === 'undefined') {
+      ModelCache.guilds[ record.guildID ].ads = {};
+    }
+    ModelCache.guilds[ record.guildID ].ads[ record.uid ] = record;
+  });
+
+  // badges
+  var records = await sails.models.badges.find();
+  ModelCache.badges = {};
+  records.forEach(async (record) => {
+    if (typeof ModelCache.guilds[ record.guildID ].badges === 'undefined') {
+      ModelCache.guilds[ record.guildID ].badges = {};
+    }
+    ModelCache.guilds[ record.guildID ].badges[ record.uid ] = record;
   });
 
   /*
@@ -76,7 +106,7 @@ module.exports.bootstrap = async function () {
             })
           }
         })(event);
-        
+
       }
     }
   }

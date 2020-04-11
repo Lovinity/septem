@@ -1,7 +1,7 @@
 /**
  * Schedules.js
  *
- * @description :: A model definition represents a database table/collection.
+ * @description :: A list of cron tasks.
  * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
  */
 

@@ -1,7 +1,7 @@
 /**
  * Guilds.js
  *
- * @description :: A model definition represents a database table/collection.
+ * @description :: A list of Discord guilds and their settings
  * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
  */
 
@@ -154,6 +154,11 @@ module.exports = {
       description: 'The ID of the role assigned when a member is verified. Also used to check and reassign saved roles.'
     },
 
+    levelRoles: {
+      type: 'json',
+      description: 'An array of key: level, value: role ID to assign the provided role when the user reaches the provided level.'
+    },
+
     conflictResolutionMembers: {
       type: 'number',
       allowNull: true,
@@ -236,15 +241,18 @@ module.exports = {
   },
 
     // Websockets and cache standards
-    afterCreate: function (newlyCreatedRecord, proceed) {
+    afterCreate: async function (newlyCreatedRecord, proceed) {
       var data = { insert: newlyCreatedRecord }
       sails.sockets.broadcast('guilds', 'guilds', data)
       ModelCache.guilds[ newlyCreatedRecord.guildID ] = newlyCreatedRecord;
+
+      // Create Yang store
+      await sails.models.store.findOrCreate({guildID: newlyCreatedRecord.guildID}, {guildID: newlyCreatedRecord.guildID});
   
       return proceed()
     },
   
-    afterUpdate: function (updatedRecord, proceed) {
+    afterUpdate: async function (updatedRecord, proceed) {
       var data = { update: updatedRecord }
       sails.sockets.broadcast('guilds', 'guilds', data)
       ModelCache.guilds[ updatedRecord.guildID ] = updatedRecord;
@@ -252,10 +260,13 @@ module.exports = {
       return proceed()
     },
   
-    afterDestroy: function (destroyedRecord, proceed) {
+    afterDestroy: async function (destroyedRecord, proceed) {
       var data = { remove: destroyedRecord.id }
       sails.sockets.broadcast('guilds', 'guilds', data)
       delete ModelCache.guilds[ destroyedRecord.guildID ];
+
+      // Destroy Yang store
+      await sails.models.store.destroy({guildID: destroyedRecord.guildID}).fetch();
   
       return proceed()
     }

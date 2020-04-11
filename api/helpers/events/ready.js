@@ -20,7 +20,7 @@ module.exports = {
         await sails.models.guilds.findOrCreate({ guildID: guild.id }, { guildID: guild.id });
 
         guild.roles.cache.each(async (role) => {
-          if (typeof ModelCache.roles[ role.id ] === 'undefined') {
+          if (typeof ModelCache.guilds[ guild.id ].roles === 'undefined' || typeof ModelCache.guilds[ guild.id ].roles[ role.id ] === 'undefined') {
             await sails.models.roles.findOrCreate({ roleID: role.id }, { roleID: role.id, guildID: role.guild.id });
           }
         })
