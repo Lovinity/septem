@@ -45,10 +45,7 @@ module.exports = {
   afterCreate: function (newlyCreatedRecord, proceed) {
     var data = { insert: newlyCreatedRecord }
     sails.sockets.broadcast('roles', 'roles', data)
-    if (typeof ModelCache.guilds[ newlyCreatedRecord.guildID ].roles === 'undefined') {
-      ModelCache.guilds[ newlyCreatedRecord.guildID ].roles = {};
-    }
-    ModelCache.guilds[ newlyCreatedRecord.guildID ].roles[ newlyCreatedRecord.roleID ] = newlyCreatedRecord;
+    Caches.set('roles', newlyCreatedRecord);
 
     return proceed()
   },
@@ -56,10 +53,7 @@ module.exports = {
   afterUpdate: function (updatedRecord, proceed) {
     var data = { update: updatedRecord }
     sails.sockets.broadcast('roles', 'roles', data)
-    if (typeof ModelCache.guilds[ updatedRecord.guildID ].roles === 'undefined') {
-      ModelCache.guilds[ updatedRecord.guildID ].roles = {};
-    }
-    ModelCache.guilds[ updatedRecord.guildID ].roles[ updatedRecord.roleID ] = updatedRecord;
+    Caches.set('roles', updatedRecord);
 
     return proceed()
   },
@@ -67,10 +61,7 @@ module.exports = {
   afterDestroy: function (destroyedRecord, proceed) {
     var data = { remove: destroyedRecord.id }
     sails.sockets.broadcast('roles', 'roles', data)
-    if (typeof ModelCache.guilds[ destroyedRecord.guildID ].roles === 'undefined') {
-      ModelCache.guilds[ destroyedRecord.guildID ].roles = {};
-    }
-    delete ModelCache.guilds[ destroyedRecord.guildID ].roles[ destroyedRecord.roleID ];
+    Caches.del('roles', destroyedRecord);
 
     return proceed()
   }

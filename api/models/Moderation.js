@@ -9,7 +9,7 @@ module.exports = {
 
   attributes: {
 
-    // API note: guildID and userID should never be unique because the same user could exist in multiple guilds.
+    // API note: guildID and userID should never be unique because the same user could exist in multiple moderation.
     case: {
       type: 'string',
       required: true,
@@ -178,51 +178,24 @@ module.exports = {
   // Websockets and cache standards
   afterCreate: function (newlyCreatedRecord, proceed) {
     var data = { insert: newlyCreatedRecord }
-    sails.sockets.broadcast('moderation', 'moderation', data);
-    if (typeof ModelCache.guilds[ newlyCreatedRecord.guildID ].members === 'undefined') {
-      ModelCache.guilds[ newlyCreatedRecord.guildID ].members = {};
-    }
-    if (typeof ModelCache.guilds[ newlyCreatedRecord.guildID ].members[ newlyCreatedRecord.userID ] === 'undefined') {
-      ModelCache.guilds[ newlyCreatedRecord.guildID ].members[ newlyCreatedRecord.userID ] = {};
-    }
-    if (typeof ModelCache.guilds[ newlyCreatedRecord.guildID ].members[ newlyCreatedRecord.userID ].moderation === 'undefined') {
-      ModelCache.guilds[ newlyCreatedRecord.guildID ].members[ newlyCreatedRecord.userID ].moderation = {};
-    }
-    ModelCache.guilds[ newlyCreatedRecord.guildID ].members[ newlyCreatedRecord.userID ].moderation[ newlyCreatedRecord.case ] = newlyCreatedRecord;
+    sails.sockets.broadcast('moderation', 'moderation', data)
+    Caches.set('moderation', newlyCreatedRecord);
 
     return proceed()
   },
 
   afterUpdate: function (updatedRecord, proceed) {
     var data = { update: updatedRecord }
-    sails.sockets.broadcast('moderation', 'moderation', data);
-    if (typeof ModelCache.guilds[ updatedRecord.guildID ].members === 'undefined') {
-      ModelCache.guilds[ updatedRecord.guildID ].members = {};
-    }
-    if (typeof ModelCache.guilds[ updatedRecord.guildID ].members[ updatedRecord.userID ] === 'undefined') {
-      ModelCache.guilds[ updatedRecord.guildID ].members[ updatedRecord.userID ] = {};
-    }
-    if (typeof ModelCache.guilds[ updatedRecord.guildID ].members[ updatedRecord.userID ].moderation === 'undefined') {
-      ModelCache.guilds[ updatedRecord.guildID ].members[ updatedRecord.userID ].moderation = {};
-    }
-    ModelCache.guilds[ updatedRecord.guildID ].members[ updatedRecord.userID ].moderation[ updatedRecord.case ] = updatedRecord;
+    sails.sockets.broadcast('moderation', 'moderation', data)
+    Caches.set('moderation', updatedRecord);
 
     return proceed()
   },
 
   afterDestroy: function (destroyedRecord, proceed) {
     var data = { remove: destroyedRecord.id }
-    sails.sockets.broadcast('moderation', 'moderation', data);
-    if (typeof ModelCache.guilds[ destroyedRecord.guildID ].members === 'undefined') {
-      ModelCache.guilds[ destroyedRecord.guildID ].members = {};
-    }
-    if (typeof ModelCache.guilds[ destroyedRecord.guildID ].members[ destroyedRecord.userID ] === 'undefined') {
-      ModelCache.guilds[ destroyedRecord.guildID ].members[ destroyedRecord.userID ] = {};
-    }
-    if (typeof ModelCache.guilds[ destroyedRecord.guildID ].members[ destroyedRecord.userID ].moderation === 'undefined') {
-      ModelCache.guilds[ destroyedRecord.guildID ].members[ destroyedRecord.userID ].moderation = {};
-    }
-    delete ModelCache.guilds[ destroyedRecord.guildID ].members[ destroyedRecord.userID ].moderation[ destroyedRecord.case ];
+    sails.sockets.broadcast('moderation', 'moderation', data)
+    Caches.del('moderation', destroyedRecord);
 
     return proceed()
   }

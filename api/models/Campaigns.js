@@ -1,7 +1,7 @@
 /**
  * Sessions.js
  *
- * @description :: Role play sessions
+ * @description :: Campaigns
  * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
  */
 
@@ -25,11 +25,6 @@ module.exports = {
       description: 'Array of game masters (user IDs) in charge of this session.'
     },
 
-    participants: {
-      type: 'json',
-      description: 'Array of character IDs of the characters participating in this session.'
-    },
-
     campaignTime: {
       type: 'ref',
       columnType: 'datetime',
@@ -49,6 +44,12 @@ module.exports = {
       min: 0,
       defaultsTo: 50,
       description: 'Amount of MP available to the protagonist team.'
+    },
+
+    sessionActive: {
+      type: 'boolean',
+      defaultsTo: false,
+      description: 'Is a session active for this campaign?'
     }
 
   },
@@ -56,33 +57,24 @@ module.exports = {
   // Websockets and cache standards
   afterCreate: function (newlyCreatedRecord, proceed) {
     var data = { insert: newlyCreatedRecord }
-    sails.sockets.broadcast('sessions', 'sessions', data)
-    if (typeof ModelCache.guilds[ newlyCreatedRecord.guildID ].sessions === 'undefined') {
-      ModelCache.guilds[ newlyCreatedRecord.guildID ].sessions = {};
-    }
-    ModelCache.guilds[ newlyCreatedRecord.guildID ].sessions[ newlyCreatedRecord.ID ] = newlyCreatedRecord;
+    sails.sockets.broadcast('campaigns', 'campaigns', data)
+    Caches.set('campaigns', newlyCreatedRecord);
 
     return proceed()
   },
 
   afterUpdate: function (updatedRecord, proceed) {
     var data = { update: updatedRecord }
-    sails.sockets.broadcast('sessions', 'sessions', data)
-    if (typeof ModelCache.guilds[ updatedRecord.guildID ].sessions === 'undefined') {
-      ModelCache.guilds[ updatedRecord.guildID ].sessions = {};
-    }
-    ModelCache.guilds[ updatedRecord.guildID ].sessions[ updatedRecord.ID ] = updatedRecord;
+    sails.sockets.broadcast('campaigns', 'campaigns', data)
+    Caches.set('campaigns', updatedRecord);
 
     return proceed()
   },
 
   afterDestroy: function (destroyedRecord, proceed) {
     var data = { remove: destroyedRecord.id }
-    sails.sockets.broadcast('sessions', 'sessions', data)
-    if (typeof ModelCache.guilds[ destroyedRecord.guildID ].sessions === 'undefined') {
-      ModelCache.guilds[ destroyedRecord.guildID ].sessions = {};
-    }
-    delete ModelCache.guilds[ destroyedRecord.guildID ].sessions[ destroyedRecord.ID ];
+    sails.sockets.broadcast('campaigns', 'campaigns', data)
+    Caches.del('campaigns', destroyedRecord);
 
     return proceed()
   }

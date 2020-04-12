@@ -9,7 +9,7 @@ module.exports = {
 
   attributes: {
 
-    // API note: guildID and userID should never be unique because the same user could exist in multiple guilds.
+    // API note: guildID and userID should never be unique because the same user could exist in multiple members.
     userID: {
       type: 'string',
       required: true
@@ -30,7 +30,7 @@ module.exports = {
     credits: {
       type: 'number',
       defaultsTo: 0,
-      description: 'Virtual guild currency. Members earn 1 credit for every XP. Can be spent on various things at guild staff discretion.'
+      description: 'Septem Regiones Dollars (SRD) are stored as credits, eg 1 credit is 1 cent. Credits are earned through guild activity and can be spent on verious things. They can also be fined in discipline.'
     },
 
     damage: {
@@ -103,10 +103,7 @@ module.exports = {
   afterCreate: function (newlyCreatedRecord, proceed) {
     var data = { insert: newlyCreatedRecord }
     sails.sockets.broadcast('members', 'members', data)
-    if (typeof ModelCache.guilds[ newlyCreatedRecord.guildID ].members === 'undefined') {
-      ModelCache.guilds[ newlyCreatedRecord.guildID ].members = {};
-    }
-    ModelCache.guilds[ newlyCreatedRecord.guildID ].members[ newlyCreatedRecord.userID ] = newlyCreatedRecord;
+    Caches.set('members', newlyCreatedRecord);
 
     return proceed()
   },
@@ -114,10 +111,7 @@ module.exports = {
   afterUpdate: function (updatedRecord, proceed) {
     var data = { update: updatedRecord }
     sails.sockets.broadcast('members', 'members', data)
-    if (typeof ModelCache.guilds[ updatedRecord.guildID ].members === 'undefined') {
-      ModelCache.guilds[ updatedRecord.guildID ].members = {};
-    }
-    ModelCache.guilds[ updatedRecord.guildID ].members[ updatedRecord.userID ] = updatedRecord;
+    Caches.set('members', updatedRecord);
 
     return proceed()
   },
@@ -125,10 +119,7 @@ module.exports = {
   afterDestroy: function (destroyedRecord, proceed) {
     var data = { remove: destroyedRecord.id }
     sails.sockets.broadcast('members', 'members', data)
-    if (typeof ModelCache.guilds[ destroyedRecord.guildID ].members === 'undefined') {
-      ModelCache.guilds[ destroyedRecord.guildID ].members = {};
-    }
-    delete ModelCache.guilds[ destroyedRecord.guildID ].members[ destroyedRecord.userID ];
+    Caches.del('members', destroyedRecord);
 
     return proceed()
   }

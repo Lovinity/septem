@@ -43,7 +43,7 @@ module.exports = {
   afterCreate: function (newlyCreatedRecord, proceed) {
     var data = { insert: newlyCreatedRecord }
     sails.sockets.broadcast('channels', 'channels', data)
-    ModelCache.channels[ newlyCreatedRecord.channelID ] = newlyCreatedRecord;
+    Caches.set('channels', newlyCreatedRecord);
 
     return proceed()
   },
@@ -51,7 +51,7 @@ module.exports = {
   afterUpdate: function (updatedRecord, proceed) {
     var data = { update: updatedRecord }
     sails.sockets.broadcast('channels', 'channels', data)
-    ModelCache.channels[ updatedRecord.channelID ] = updatedRecord;
+    Caches.set('channels', updatedRecord);
 
     return proceed()
   },
@@ -59,7 +59,7 @@ module.exports = {
   afterDestroy: function (destroyedRecord, proceed) {
     var data = { remove: destroyedRecord.id }
     sails.sockets.broadcast('channels', 'channels', data)
-    delete ModelCache.channels[ destroyedRecord.channelID ];
+    Caches.del('channels', destroyedRecord);
 
     return proceed()
   }

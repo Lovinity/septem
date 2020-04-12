@@ -10,142 +10,175 @@
  */
 
 // Globals
+global[ 'Discord' ] = require('discord.js');
 global[ 'moment' ] = require('moment');
-global[ 'ModelCache' ] = {};
+var CacheManager = require('../util/Cache');
+global[ 'Caches' ] = new CacheManager();
+global[ 'Schedules' ] = {};
 
 module.exports.bootstrap = async function () {
 
   /*
-      Load data into cache
+      DISCORD Discord.Structures AND CACHES
+      These must be extended before the client is initialized
   */
 
-  // TODO: Develop more effective caching system that only loads what is necessary (eg. don't load data of members not in respective guild).
+  // Guild
+  Caches.new('guildSettings', 'guilds', 'guildID');
+  Caches.new('ads', 'ads', 'guildID', false);
+  Caches.new('badges', 'badges', 'guildID', false);
+  Caches.new('campaigns', 'campaigns', 'guildID', false);
+  Caches.new('campaignParticipants', 'participants', 'campaignID', false);
+  Caches.new('campaignParticipantModifiers', 'modifiers', 'participantID', false);
+  Caches.new('items', 'items', 'guildID', false);
+  Discord.Structures.extend('Guild', Guild => {
+    class CoolGuild extends Guild {
+      constructor(client, data) {
+        super(client, data);
+      }
 
-  // schedules
-  var records = await sails.models.schedules.find();
-  ModelCache.schedules = {};
-  records.forEach(async (record) => {
-    ModelCache.schedules[ record.uid ] = record;
-  });
-  // Create a guild task schedule to run on all guilds every minute if it does not already exist
-  if (sails.helpers.tasks && sails.helpers.tasks.guild) {
-    await sails.models.schedules.findOrCreate({ uid: 'SYS-TASK', task: 'guild' }, { uid: 'SYS-TASK', task: 'guild', cron: '* * * * *' });
-  }
+      get settings () {
+        var settings = Caches.get('guildSettings', this.id);
+        if (!settings) {
+          sails.models.guilds.findOrCreate({ guildID: this.id }, { guildID: this.id }).exec(() => { });
+          return makeDefault(sails.models.guilds.attributes, { guildID: this.id });
+        } else {
+          return settings;
+        }
+      }
 
-  // guilds
-  var records = await sails.models.guilds.find();
-  ModelCache.guilds = {};
-  records.forEach(async (record) => {
-    ModelCache.guilds[ record.guildID ] = record;
-  });
+      get ads () {
+        return Caches.get('ads', this.id, (record) => record.guildID === this.id);
+      }
 
-  // channels
-  var records = await sails.models.channels.find();
-  ModelCache.channels = {};
-  records.forEach(async (record) => {
-    ModelCache.channels[ record.channelID ] = record;
-  });
+      get badges () {
+        return Caches.get('badges', this.id, (record) => record.guildID === this.id);
+      }
 
-  // members
-  var records = await sails.models.members.find();
-  records.forEach(async (record) => {
-    if (typeof ModelCache.guilds[ record.guildID ].members === 'undefined') {
-      ModelCache.guilds[ record.guildID ].members = {};
-    }
-    ModelCache.guilds[ record.guildID ].members[ record.userID ] = record;
-  });
+      get campaigns () {
+        var records = Caches.get('campaigns', this.id, (record) => record.guildID === this.id);
+        if (records) {
+          records.forEach((record, index) => {
+            records[ index ].participants = Caches.get('campaignParticipants', record.id);
+            if (records[ index ].participants) {
+              records[ index ].participants.forEach((recordb, indexb) => {
+                records[ index ].participants[ indexb ].modifiers = Caches.get('campaignParticipantModifiers', recordb.id);
+              })
+            }
+          });
+        }
 
-  // Member profiles
-  var records = await sails.models.profiles.find();
-  records.forEach(async (record) => {
-    if (typeof ModelCache.guilds[ record.guildID ].members === 'undefined') {
-      ModelCache.guilds[ record.guildID ].members = {};
-    }
-    if (typeof ModelCache.guilds[ record.guildID ].members[ record.userID ] === 'undefined') {
-      ModelCache.guilds[ record.guildID ].members[ record.userID ] = {};
-    }
-    ModelCache.guilds[ record.guildID ].members[ record.userID ].profile = record;
-  });
+        return records;
+      }
 
-  // Member moderation logs
-  var records = await sails.models.moderation.find();
-  records.forEach(async (record) => {
-    if (typeof ModelCache.guilds[ record.guildID ].members === 'undefined') {
-      ModelCache.guilds[ record.guildID ].members = {};
+      get items () {
+        return Caches.get('items', this.id, (record) => record.guildID === this.id);
+      }
     }
-    if (typeof ModelCache.guilds[ record.guildID ].members[ record.userID ] === 'undefined') {
-      ModelCache.guilds[ record.guildID ].members[ record.userID ] = {};
-    }
-    if (typeof ModelCache.guilds[ record.guildID ].members[ record.userID ].moderation === 'undefined') {
-      ModelCache.guilds[ record.guildID ].members[ record.userID ].moderation = {};
-    }
-    ModelCache.guilds[ record.guildID ].members[ record.userID ].moderation[ record.case ] = record;
+
+    return CoolGuild;
   });
 
-  // Member role play characters
-  var records = await sails.models.characters.find();
-  records.forEach(async (record) => {
-    if (typeof ModelCache.guilds[ record.guildID ].members === 'undefined') {
-      ModelCache.guilds[ record.guildID ].members = {};
+  // Users (MUST be included with GuildMember)
+  Discord.Structures.extend('User', User => {
+    class CoolUser extends User {
+      constructor(client, data) {
+        super(client, data);
+      }
+
+      guildSettings (guildID) {
+        var settings = (Caches.get('memberSettings', this.id, (record) => record.guildID === guildID) || [ {} ])[ 0 ];
+        if (!settings) {
+          sails.models.members.findOrCreate({ userID: this.id, guildID: guildID }, { userID: this.id, guildID: guildID }).exec(() => { });
+          return makeDefault(sails.models.members.attributes, { userID: this.id, guildID: guildID });
+        } else {
+          return settings;
+        }
+      }
+
+      guildProfile (guildID) {
+        var settings = (Caches.get('memberProfiles', this.id, (record) => record.guildID === guildID) || [ {} ])[ 0 ];
+        if (!settings) {
+          sails.models.profiles.findOrCreate({ userID: this.id, guildID: guildID }, { userID: this.id, guildID: guildID }).exec(() => { });
+          return makeDefault(sails.models.profiles.attributes, { userID: this.id, guildID: guildID });
+        } else {
+          return settings;
+        }
+      }
+
+      guildCharacters (guildID) {
+        return Caches.get('memberCharacters', this.id, (record) => record.guildID === guildID);
+      }
     }
-    if (typeof ModelCache.guilds[ record.guildID ].members[ record.userID ] === 'undefined') {
-      ModelCache.guilds[ record.guildID ].members[ record.userID ] = {};
-    }
-    if (typeof ModelCache.guilds[ record.guildID ].members[ record.userID ].characters === 'undefined') {
-      ModelCache.guilds[ record.guildID ].members[ record.userID ].characters = {};
-    }
-    ModelCache.guilds[ record.guildID ].members[ record.userID ].characters[ record.ID ] = record;
+
+    return CoolUser;
   });
 
-  // roles
-  var records = await sails.models.roles.find();
-  records.forEach(async (record) => {
-    if (typeof ModelCache.guilds[ record.guildID ].roles === 'undefined') {
-      ModelCache.guilds[ record.guildID ].roles = {};
+  // GuildMember
+  Caches.new('memberSettings', 'members', 'userID', false);
+  Caches.new('memberProfiles', 'profiles', 'userID', false);
+  Caches.new('memberCharacters', 'characters', 'userID', false);
+  Discord.Structures.extend('GuildMember', GuildMember => {
+    class CoolGuildMember extends GuildMember {
+      constructor(client, data, guild) {
+        super(client, data, guild);
+      }
+
+      get settings () {
+        var settings = (Caches.get('memberSettings', this.id, (record) => record.guildID === this.guild.id) || [ {} ])[ 0 ];
+        if (!settings) {
+          sails.models.members.findOrCreate({ userID: this.id, guildID: this.guild.id }, { userID: this.id, guildID: this.guild.id }).exec(() => { });
+          return makeDefault(sails.models.members.attributes, { userID: this.id, guildID: this.guild.id });
+        } else {
+          return settings;
+        }
+      }
+
+      get profile () {
+        var settings = (Caches.get('memberProfiles', this.id, (record) => record.guildID === this.guild.id) || [ {} ])[ 0 ];
+        if (!settings) {
+          sails.models.profiles.findOrCreate({ userID: this.id, guildID: this.guild.id }, { userID: this.id, guildID: this.guild.id }).exec(() => { });
+          return makeDefault(sails.models.profiles.attributes, { userID: this.id, guildID: this.guild.id });
+        } else {
+          return settings;
+        }
+      }
+
+      get characters () {
+        return Caches.get('memberCharacters', this.id, (record) => record.guildID === this.guild.id);
+      }
     }
-    ModelCache.guilds[ record.guildID ].roles[ record.roleID ] = record;
+
+    return CoolGuildMember;
   });
 
-  // store
-  var records = await sails.models.store.find();
-  ModelCache.store = {};
-  records.forEach(async (record) => {
-    ModelCache.store[ record.guildID ] = record;
-  });
+  // TextChannel
+  Caches.new('channelSettings', 'channels', 'channelID');
+  Discord.Structures.extend('TextChannel', TextChannel => {
+    class CoolTextChannel extends TextChannel {
+      constructor(guild, data) {
+        super(guild, data);
+      }
 
-  // Ads
-  var records = await sails.models.ads.find();
-  records.forEach(async (record) => {
-    if (typeof ModelCache.guilds[ record.guildID ].ads === 'undefined') {
-      ModelCache.guilds[ record.guildID ].ads = {};
+      get settings () {
+        var settings = Caches.get('channelSettings', this.id);
+        if (!settings) {
+          sails.models.channels.findOrCreate({ channelID: this.id }, { channelID: this.id, guildID: this.guild.id }).exec(() => { });
+          return makeDefault(sails.models.channels.attributes, { channelID: this.id, guildID: this.guild.id });
+        } else {
+          return settings;
+        }
+      }
     }
-    ModelCache.guilds[ record.guildID ].ads[ record.uid ] = record;
-  });
 
-  // badges
-  var records = await sails.models.badges.find();
-  records.forEach(async (record) => {
-    if (typeof ModelCache.guilds[ record.guildID ].badges === 'undefined') {
-      ModelCache.guilds[ record.guildID ].badges = {};
-    }
-    ModelCache.guilds[ record.guildID ].badges[ record.uid ] = record;
-  });
-
-  // RP sessions
-  var records = await sails.models.sessions.find();
-  records.forEach(async (record) => {
-    if (typeof ModelCache.guilds[ record.guildID ].sessions === 'undefined') {
-      ModelCache.guilds[ record.guildID ].sessions = {};
-    }
-    ModelCache.guilds[ record.guildID ].sessions[ record.ID ] = record;
+    return CoolTextChannel;
   });
 
   /*
-  *    DISCORD
+      DISCORD
   */
 
   // Load Discord globals and initialize Discord client
-  global[ 'Discord' ] = require('discord.js');
   Discord.DiscordMenu = require('../util/DiscordMenu');
   global[ 'DiscordClient' ] = new Discord.Client(sails.config.custom.discord.clientOptions);
 
@@ -175,15 +208,24 @@ module.exports.bootstrap = async function () {
   DiscordClient.login(sails.config.custom.discord.token);
 
   /*
-      SCHEDULES
+      INITIALIZE SCHEDULES
   */
 
   // Initialize cron schedules
-  ModelCache.scheduleCrons = {};
-  for (var record in ModelCache.schedules) {
-    if (Object.prototype.hasOwnProperty.call(ModelCache.schedules, record)) {
-      await sails.helpers.schedules.add(ModelCache.schedules[ record ]);
-    }
-  }
+  var records = await sails.models.schedules.find();
+  records.forEach(async (record) => {
+    Schedules[ record.id ] = await sails.helpers.schedules.add(record);
+  });
 
 };
+
+// Sync helper for developing and returning a default record when creating a new one in the database. 
+function makeDefault (attributes, defaults = {}) {
+  var temp = {};
+  for (var key in attributes) {
+    if (Object.prototype.hasOwnProperty.call(attributes, key)) {
+      temp[ key ] = (typeof defaults[ key ] !== 'undefined') ? (defaults[ key ]) : (typeof attributes[ key ].defaultsTo !== 'undefined') ? attributes[ key ].defaultsTo : null;
+    }
+  }
+  return temp;
+}

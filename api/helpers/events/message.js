@@ -27,7 +27,7 @@ module.exports = {
     }
 
     // TODO: Check for a command
-    var prefix = ModelCache.guilds[ inputs.message.guild.id ].prefix || sails.config.custom.discord.defaultPrefix;
+    var prefix = inputs.message.guild.settings.prefix || sails.config.custom.discord.defaultPrefix;
     var command;
     var commandParts;
     if (inputs.message.content.startsWith(prefix)) {

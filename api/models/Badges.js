@@ -52,10 +52,7 @@ module.exports = {
   afterCreate: function (newlyCreatedRecord, proceed) {
     var data = { insert: newlyCreatedRecord }
     sails.sockets.broadcast('badges', 'badges', data)
-    if (typeof ModelCache.guilds[ newlyCreatedRecord.guildID ].badges === 'undefined') {
-      ModelCache.guilds[ newlyCreatedRecord.guildID ].badges = {};
-    }
-    ModelCache.guilds[ newlyCreatedRecord.guildID ].badges[ newlyCreatedRecord.uid ] = newlyCreatedRecord;
+    Caches.set('badges', newlyCreatedRecord);
 
     return proceed()
   },
@@ -63,10 +60,7 @@ module.exports = {
   afterUpdate: function (updatedRecord, proceed) {
     var data = { update: updatedRecord }
     sails.sockets.broadcast('badges', 'badges', data)
-    if (typeof ModelCache.guilds[ updatedRecord.guildID ].badges === 'undefined') {
-      ModelCache.guilds[ updatedRecord.guildID ].badges = {};
-    }
-    ModelCache.guilds[ updatedRecord.guildID ].badges[ updatedRecord.uid ] = updatedRecord;
+    Caches.set('badges', updatedRecord);
 
     return proceed()
   },
@@ -74,10 +68,7 @@ module.exports = {
   afterDestroy: function (destroyedRecord, proceed) {
     var data = { remove: destroyedRecord.id }
     sails.sockets.broadcast('badges', 'badges', data)
-    if (typeof ModelCache.guilds[ destroyedRecord.guildID ].badges === 'undefined') {
-      ModelCache.guilds[ destroyedRecord.guildID ].badges = {};
-    }
-    delete ModelCache.guilds[ destroyedRecord.guildID ].badges[ destroyedRecord.uid ];
+    Caches.del('badges', destroyedRecord);
 
     return proceed()
   }

@@ -1,7 +1,7 @@
 /**
  * Store.js
  *
- * @description :: A list of guilds and their store settings.
+ * @description :: A list of store and their store settings.
  * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
  */
 
@@ -88,7 +88,7 @@ module.exports = {
   afterCreate: function (newlyCreatedRecord, proceed) {
     var data = { insert: newlyCreatedRecord }
     sails.sockets.broadcast('store', 'store', data)
-    ModelCache.store[ newlyCreatedRecord.guildID ] = newlyCreatedRecord;
+    Caches.set('store', newlyCreatedRecord);
 
     return proceed()
   },
@@ -96,7 +96,7 @@ module.exports = {
   afterUpdate: function (updatedRecord, proceed) {
     var data = { update: updatedRecord }
     sails.sockets.broadcast('store', 'store', data)
-    ModelCache.store[ updatedRecord.guildID ] = updatedRecord;
+    Caches.set('store', updatedRecord);
 
     return proceed()
   },
@@ -104,7 +104,7 @@ module.exports = {
   afterDestroy: function (destroyedRecord, proceed) {
     var data = { remove: destroyedRecord.id }
     sails.sockets.broadcast('store', 'store', data)
-    delete ModelCache.store[ destroyedRecord.guildID ];
+    Caches.del('store', destroyedRecord);
 
     return proceed()
   }

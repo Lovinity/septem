@@ -9,7 +9,7 @@ module.exports = {
 
   attributes: {
 
-    // API note: guildID and userID should never be unique because the same user could exist in multiple guilds.
+    // API note: guildID and userID should never be unique because the same user could exist in multiple profiles.
     userID: {
       type: 'string',
       required: true
@@ -60,13 +60,7 @@ module.exports = {
   afterCreate: function (newlyCreatedRecord, proceed) {
     var data = { insert: newlyCreatedRecord }
     sails.sockets.broadcast('profiles', 'profiles', data)
-    if (typeof ModelCache.guilds[ newlyCreatedRecord.guildID ].profiles === 'undefined') {
-      ModelCache.guilds[ newlyCreatedRecord.guildID ].profiles = {};
-    }
-    if (typeof ModelCache.guilds[ newlyCreatedRecord.guildID ].profiles[ newlyCreatedRecord.userID ] === 'undefined') {
-      ModelCache.guilds[ newlyCreatedRecord.guildID ].profiles[ newlyCreatedRecord.userID ] = {};
-    }
-    ModelCache.guilds[ newlyCreatedRecord.guildID ].profiles[ newlyCreatedRecord.userID ].profile = newlyCreatedRecord;
+    Caches.set('profiles', newlyCreatedRecord);
 
     return proceed()
   },
@@ -74,13 +68,7 @@ module.exports = {
   afterUpdate: function (updatedRecord, proceed) {
     var data = { update: updatedRecord }
     sails.sockets.broadcast('profiles', 'profiles', data)
-    if (typeof ModelCache.guilds[ updatedRecord.guildID ].profiles === 'undefined') {
-      ModelCache.guilds[ updatedRecord.guildID ].profiles = {};
-    }
-    if (typeof ModelCache.guilds[ updatedRecord.guildID ].profiles[ updatedRecord.userID ] === 'undefined') {
-      ModelCache.guilds[ updatedRecord.guildID ].profiles[ updatedRecord.userID ] = {};
-    }
-    ModelCache.guilds[ updatedRecord.guildID ].profiles[ updatedRecord.userID ].profile = updatedRecord;
+    Caches.set('profiles', updatedRecord);
 
     return proceed()
   },
@@ -88,13 +76,7 @@ module.exports = {
   afterDestroy: function (destroyedRecord, proceed) {
     var data = { remove: destroyedRecord.id }
     sails.sockets.broadcast('profiles', 'profiles', data)
-    if (typeof ModelCache.guilds[ destroyedRecord.guildID ].profiles === 'undefined') {
-      ModelCache.guilds[ destroyedRecord.guildID ].profiles = {};
-    }
-    if (typeof ModelCache.guilds[ destroyedRecord.guildID ].profiles[ destroyedRecord.userID ] === 'undefined') {
-      ModelCache.guilds[ destroyedRecord.guildID ].profiles[ destroyedRecord.userID ] = {};
-    }
-    delete ModelCache.guilds[ destroyedRecord.guildID ].profiles[ destroyedRecord.userID ].profile;
+    Caches.del('profiles', destroyedRecord);
 
     return proceed()
   }

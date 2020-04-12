@@ -18,9 +18,9 @@ module.exports = {
 
   fn: async function (inputs) {
     // Remove the schedule
-    if (typeof ModelCache.scheduleCrons[inputs.record.id] !== undefined) {
-      ModelCache.scheduleCrons[inputs.record.id].cancel();
-      delete ModelCache.scheduleCrons[inputs.record.id];
+    if (typeof Schedules[ inputs.record.id ] !== undefined) {
+      Schedules[ inputs.record.id ].cancel();
+      delete Schedules[ inputs.record.id ];
     }
   }
 

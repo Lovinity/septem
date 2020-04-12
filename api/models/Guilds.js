@@ -106,6 +106,18 @@ module.exports = {
       description: 'The ID of the channel the bot will use for posting roles people can self-assign with reactions.'
     },
 
+    sessionChannel: {
+      type: 'string',
+      allowNull: true,
+      description: 'The ID of the text channel used for official campaign sessions.'
+    },
+
+    sessionVoiceChannel: {
+      type: 'string',
+      allowNull: true,
+      description: 'The ID of the voice channel used for official campaign sessions.'
+    },
+
     statsMessage: {
       type: 'string',
       allowNull: true,
@@ -161,7 +173,6 @@ module.exports = {
 
     conflictResolutionMembers: {
       type: 'number',
-      allowNull: true,
       min: 1,
       defaultsTo: 3,
       description: 'The number of non-staff members that must issue the conflict command within conflictResolutionTime for conflict resolution to initiate.'
@@ -169,7 +180,6 @@ module.exports = {
 
     conflictResolutionTime: {
       type: 'number',
-      allowNull: true,
       min: 1,
       defaultsTo: 15,
       description: 'The number of minutes an execution of the conflict command is valid before it expires.'
@@ -177,7 +187,6 @@ module.exports = {
 
     reportMembers: {
       type: 'number',
-      allowNull: true,
       min: 1,
       defaultsTo: 3,
       description: 'The number of members that must report someone within reportTime for a member to be auto-muted for investigation.'
@@ -185,7 +194,6 @@ module.exports = {
 
     reportTime: {
       type: 'number',
-      allowNull: true,
       min: 1,
       defaultsTo: 60,
       description: 'The number of minutes before a member report expires.'
@@ -193,7 +201,6 @@ module.exports = {
 
     starboardRep: {
       type: 'number',
-      allowNull: true,
       min: 1,
       defaultsTo: 3,
       description: 'The minimum reputation on a message required for it to be featured on the starboard.'
@@ -203,7 +210,6 @@ module.exports = {
 
     antispamCooldown: {
       type: 'number',
-      allowNull: true,
       min: 1,
       max: 100,
       defaultsTo: 33,
@@ -240,36 +246,30 @@ module.exports = {
 
   },
 
-    // Websockets and cache standards
-    afterCreate: async function (newlyCreatedRecord, proceed) {
-      var data = { insert: newlyCreatedRecord }
-      sails.sockets.broadcast('guilds', 'guilds', data)
-      ModelCache.guilds[ newlyCreatedRecord.guildID ] = newlyCreatedRecord;
+  // Websockets and cache standards
+  afterCreate: function (newlyCreatedRecord, proceed) {
+    var data = { insert: newlyCreatedRecord }
+    sails.sockets.broadcast('guilds', 'guilds', data)
+    Caches.set('guilds', newlyCreatedRecord);
 
-      // Create store
-      await sails.models.store.findOrCreate({guildID: newlyCreatedRecord.guildID}, {guildID: newlyCreatedRecord.guildID});
-  
-      return proceed()
-    },
-  
-    afterUpdate: async function (updatedRecord, proceed) {
-      var data = { update: updatedRecord }
-      sails.sockets.broadcast('guilds', 'guilds', data)
-      ModelCache.guilds[ updatedRecord.guildID ] = updatedRecord;
-  
-      return proceed()
-    },
-  
-    afterDestroy: async function (destroyedRecord, proceed) {
-      var data = { remove: destroyedRecord.id }
-      sails.sockets.broadcast('guilds', 'guilds', data)
-      delete ModelCache.guilds[ destroyedRecord.guildID ];
+    return proceed()
+  },
 
-      // Destroy store
-      await sails.models.store.destroy({guildID: destroyedRecord.guildID}).fetch();
-  
-      return proceed()
-    }
+  afterUpdate: function (updatedRecord, proceed) {
+    var data = { update: updatedRecord }
+    sails.sockets.broadcast('guilds', 'guilds', data)
+    Caches.set('guilds', updatedRecord);
+
+    return proceed()
+  },
+
+  afterDestroy: function (destroyedRecord, proceed) {
+    var data = { remove: destroyedRecord.id }
+    sails.sockets.broadcast('guilds', 'guilds', data)
+    Caches.del('guilds', destroyedRecord);
+
+    return proceed()
+  }
 
 };
 

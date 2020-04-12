@@ -128,20 +128,6 @@ module.exports = {
       description: 'Experience points, which determines the level of the character.'
     },
 
-    HP: {
-      type: 'number',
-      min: 0,
-      defaultsTo: 0,
-      description: 'Hit points / health of the character.'
-    },
-
-    EP: {
-      type: 'number',
-      min: 0,
-      defaultsTo: 25,
-      description: 'Energy points. Determines how much energy the character has to run or use energy-based spells/attacks.'
-    },
-
     SP: {
       type: 'number',
       min: 0,
@@ -154,51 +140,24 @@ module.exports = {
   // Websockets and cache standards
   afterCreate: function (newlyCreatedRecord, proceed) {
     var data = { insert: newlyCreatedRecord }
-    sails.sockets.broadcast('characters', 'characters', data);
-    if (typeof ModelCache.guilds[ newlyCreatedRecord.guildID ].members === 'undefined') {
-      ModelCache.guilds[ newlyCreatedRecord.guildID ].members = {};
-    }
-    if (typeof ModelCache.guilds[ newlyCreatedRecord.guildID ].members[ newlyCreatedRecord.userID ] === 'undefined') {
-      ModelCache.guilds[ newlyCreatedRecord.guildID ].members[ newlyCreatedRecord.userID ] = {};
-    }
-    if (typeof ModelCache.guilds[ newlyCreatedRecord.guildID ].members[ newlyCreatedRecord.userID ].characters === 'undefined') {
-      ModelCache.guilds[ newlyCreatedRecord.guildID ].members[ newlyCreatedRecord.userID ].characters = {};
-    }
-    ModelCache.guilds[ newlyCreatedRecord.guildID ].members[ newlyCreatedRecord.userID ].characters[ newlyCreatedRecord.ID ] = newlyCreatedRecord;
+    sails.sockets.broadcast('characters', 'characters', data)
+    Caches.set('characters', newlyCreatedRecord);
 
     return proceed()
   },
 
   afterUpdate: function (updatedRecord, proceed) {
     var data = { update: updatedRecord }
-    sails.sockets.broadcast('characters', 'characters', data);
-    if (typeof ModelCache.guilds[ updatedRecord.guildID ].members === 'undefined') {
-      ModelCache.guilds[ updatedRecord.guildID ].members = {};
-    }
-    if (typeof ModelCache.guilds[ updatedRecord.guildID ].members[ updatedRecord.userID ] === 'undefined') {
-      ModelCache.guilds[ updatedRecord.guildID ].members[ updatedRecord.userID ] = {};
-    }
-    if (typeof ModelCache.guilds[ updatedRecord.guildID ].members[ updatedRecord.userID ].characters === 'undefined') {
-      ModelCache.guilds[ updatedRecord.guildID ].members[ updatedRecord.userID ].characters = {};
-    }
-    ModelCache.guilds[ updatedRecord.guildID ].members[ updatedRecord.userID ].characters[ updatedRecord.ID ] = updatedRecord;
+    sails.sockets.broadcast('characters', 'characters', data)
+    Caches.set('characters', updatedRecord);
 
     return proceed()
   },
 
   afterDestroy: function (destroyedRecord, proceed) {
     var data = { remove: destroyedRecord.id }
-    sails.sockets.broadcast('characters', 'characters', data);
-    if (typeof ModelCache.guilds[ destroyedRecord.guildID ].members === 'undefined') {
-      ModelCache.guilds[ destroyedRecord.guildID ].members = {};
-    }
-    if (typeof ModelCache.guilds[ destroyedRecord.guildID ].members[ destroyedRecord.userID ] === 'undefined') {
-      ModelCache.guilds[ destroyedRecord.guildID ].members[ destroyedRecord.userID ] = {};
-    }
-    if (typeof ModelCache.guilds[ destroyedRecord.guildID ].members[ destroyedRecord.userID ].characters === 'undefined') {
-      ModelCache.guilds[ destroyedRecord.guildID ].members[ destroyedRecord.userID ].characters = {};
-    }
-    delete ModelCache.guilds[ destroyedRecord.guildID ].members[ destroyedRecord.userID ].characters[ destroyedRecord.ID ];
+    sails.sockets.broadcast('characters', 'characters', data)
+    Caches.del('characters', destroyedRecord);
 
     return proceed()
   }
