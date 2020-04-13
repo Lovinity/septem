@@ -62,10 +62,10 @@ module.exports = {
       });
 
       // Create a buffer with the data
-      var buffer = new Buffer(data, "utf-8");
+      var buffer = Buffer.from(data, "utf-8");
 
       // Send the buffer to the staff channel as a txt file
-      await sails.helpers.guild.send('eventLogChannel', inputs.channel.guild, `:speech_left: :wastebasket: The channel ${inputs.channel.name} (${inputs.channel.id}) was deleted${auditLog ? ` by ${auditLog.executor.tag} (${auditLog.executor.id})` : ``}.`, { files: [ { attachment: buffer, name: `${channel.name}.txt` } ] });
+      await sails.helpers.guild.send('eventLogChannel', inputs.channel.guild, `:speech_left: :wastebasket: The channel ${inputs.channel.name} (${inputs.channel.id}) was deleted${auditLog ? ` by ${auditLog.executor.tag} (${auditLog.executor.id})` : ``}.`, { files: [ { attachment: buffer, name: `${inputs.channel.name}.txt` } ] });
     } else if (inputs.channel.guild) {
       await sails.helpers.guild.send('eventLogChannel', inputs.channel.guild, `:speech_left: :wastebasket: The ${inputs.channel.type} channel ${inputs.channel.name} (${inputs.channel.id}) was deleted${auditLog ? ` by ${auditLog.executor.tag} (${auditLog.executor.id})` : ``}.`);
     }
