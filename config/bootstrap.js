@@ -132,6 +132,14 @@ module.exports.bootstrap = async function () {
       get moderation () {
         return Caches.get('moderation').collection.filter((record) => record.userID === this.id && record.guildID === this.guild.id);
       }
+
+      get HP () {
+        var damage = this.settings.damage;
+        var decay = this.guild.settings.XPForOneHP;
+        var HP = (100 + Math.floor(decay > 0 ? this.settings.XP / decay : 0)) - damage;
+        if (HP < 0) HP = 0;
+        return HP;
+      }
     }
 
     return CoolGuildMember;
@@ -158,6 +166,15 @@ module.exports.bootstrap = async function () {
 
       guildModeration (guildID) {
         return Caches.get('moderation').collection.filter((record) => record.userID === this.id && record.guildID === guildID);
+      }
+
+      guildHP (guildID) {
+        var member = Caches.get('members').find([ this.id, guildID ]);
+        var damage = member.settings.damage;
+        var decay = member.guild.settings.XPForOneHP;
+        var HP = (100 + Math.floor(decay > 0 ? member.settings.XP / decay : 0)) - damage;
+        if (HP < 0) HP = 0;
+        return HP;
       }
     }
 

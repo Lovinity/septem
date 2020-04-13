@@ -168,7 +168,7 @@ module.exports = {
 
     levelRoles: {
       type: 'json',
-      description: 'An array of key: level, value: role ID to assign the provided role when the user reaches the provided level.'
+      description: 'An object of level: role ID to assign the provided role when the user reaches the provided level.'
     },
 
     conflictResolutionMembers: {

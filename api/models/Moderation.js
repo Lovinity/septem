@@ -45,6 +45,12 @@ module.exports = {
       description: 'An array of rule numbers that the member violated in this discipline.'
     },
 
+    appealed: {
+      type: 'boolean',
+      defaultsTo: false,
+      description: 'Whether or not this moderation action was appealed.'
+    },
+
     reason: {
       type: 'string',
       maxLength: 1024,
