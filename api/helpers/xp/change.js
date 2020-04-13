@@ -25,6 +25,8 @@ module.exports = {
     Caches.get('members').set([ inputs.member.userID, inputs.member.guildID ], () => {
       return { XP: inputs.member.settings.XP + inputs.amount, credits: inputs.member.settings.XP + inputs.amount, activityScore: inputs.member.settings.XP + inputs.amount };
     })
+
+    await sails.helpers.xp.checkRoles(inputs.member);
   }
 
 

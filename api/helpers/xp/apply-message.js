@@ -24,6 +24,8 @@ module.exports = {
       inputs.message.prevXP = inputs.message.XP;
       return { XP: inputs.message.member.settings.XP + adjustment, credits: inputs.message.member.settings.credits + adjustment, activityScore: inputs.message.member.settings.activityScore + adjustment };
     })
+
+    await sails.helpers.xp.checkRoles(inputs.message.member);
   }
 
 
