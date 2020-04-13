@@ -26,7 +26,18 @@ module.exports = {
       return;
     }
 
-    // TODO: Check for a command
+    // Update last active
+    Caches.get('members').set([ inputs.message.member.id, inputs.message.guild.id ], () => {
+      return { lastActive: moment().toISOString(true) };
+    });
+
+    // Add spam score
+    await sails.helpers.spam.applyMessage(inputs.message);
+
+    // Add XP and credits
+    await sails.helpers.xp.applyMessage(inputs.message);
+
+    // Check for a command and execute it if found
     var prefix = inputs.message.guild.settings.prefix || sails.config.custom.discord.defaultPrefix;
     var command;
     var commandParts;

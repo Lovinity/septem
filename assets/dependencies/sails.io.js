@@ -958,7 +958,7 @@ return new(b[["Active"].concat("Object").join("X")])("Microsoft.XMLHTTP")}catch(
             ''
             // ' ⚓︎ (development mode)'
             // 'e.g. to send a GET request to Sails via WebSockets, run:'+ '\n' +
-            // '`io.socket.get("/foo", function serverRespondedWith (body, jwr) { console.log(body); })`'+ '\n' +
+            // '`io.socket.get("/foo", function serverRespondedWith (body, jwr) { log(body); })`'+ '\n' +
           );
         });
 

@@ -23,7 +23,7 @@ module.exports = {
     if (typeof sails.helpers.tasks === 'undefined' || typeof sails.helpers.tasks[ inputs.record.task ] === 'undefined') return;
 
     // Unschedule existing schedule if applicable
-    if (typeof Schedules[ inputs.record.id ] !== undefined) {
+    if (typeof Schedules[ inputs.record.id ] !== 'undefined') {
       Schedules[ inputs.record.id ].cancel();
     }
 

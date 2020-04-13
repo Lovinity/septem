@@ -9,6 +9,12 @@ module.exports = {
 
   attributes: {
 
+    uid: {
+      type: 'string',
+      unique: true,
+      required: true
+    },
+
     campaignID: {
       type: 'number',
       required: true

@@ -52,9 +52,17 @@ module.exports = {
       description: 'Members earn spam score for their messages; the more spammy, the more points. Breaking 100 triggers an antispam verbal warning, continuing without waiting a few minutes results in antispam discipline.'
     },
 
+    activityScore: {
+      type: 'number',
+      min: 0,
+      defaultsTo: 0,
+      description: 'When members earn XP, their activity score goes up by 1. Activity scores decay by 1/24 every hour.'
+    },
+
     lastActive: {
       type: 'ref',
       columnType: 'datetime',
+      defaultsTo: moment().toISOString(true),
       description: 'Date/time of the most recent message the member sent or when they were last detected in an active voice channel.'
     },
 
@@ -100,6 +108,7 @@ module.exports = {
   },
 
   // Websockets and cache standards
+
   afterCreate: function (newlyCreatedRecord, proceed) {
     var data = { insert: newlyCreatedRecord }
     sails.sockets.broadcast('members', 'members', data)

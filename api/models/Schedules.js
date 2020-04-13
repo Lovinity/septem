@@ -9,7 +9,7 @@ module.exports = {
 
   attributes: {
 
-    id: {
+    uid: {
       type: 'string',
       unique: true,
       required: true
@@ -53,9 +53,7 @@ module.exports = {
     sails.sockets.broadcast('schedules', 'schedules', data)
 
     // Schedule the new schedule in cron
-    (async () => {
-      await sails.helpers.schedules.add(newlyCreatedRecord);
-    })();
+    sails.helpers.schedules.add(newlyCreatedRecord).exec(() => { });
 
     return proceed()
   },
@@ -65,9 +63,7 @@ module.exports = {
     sails.sockets.broadcast('schedules', 'schedules', data)
 
     // Re-schedule the schedule in cron
-    (async () => {
-      await sails.helpers.schedules.add(updatedRecord);
-    })();
+    sails.helpers.schedules.add(updatedRecord).exec(() => { });
 
     return proceed()
   },
@@ -77,9 +73,7 @@ module.exports = {
     sails.sockets.broadcast('schedules', 'schedules', data)
 
     // Remove the schedule from cron
-    (async () => {
-      await sails.helpers.schedules.remove(destroyedRecord);
-    })();
+    sails.helpers.schedules.remove(destroyedRecord).exec(() => { });
 
     return proceed()
   }

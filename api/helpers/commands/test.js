@@ -20,9 +20,11 @@ module.exports = {
 
 
   fn: async function (inputs) {
-    var member = await sails.helpers.resolvers.member(inputs.message, inputs.stuff);
-    console.dir(member.settings);
-    return member.user.tag;
+    let member = await sails.helpers.resolvers.member(inputs.message, inputs.stuff);
+
+    Caches.get('members').set([ member.id, member.guild.id ], () => {
+      return { XP: 500 }
+    })
   }
 
 

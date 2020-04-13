@@ -8,6 +8,12 @@
 module.exports = {
 
   attributes: {
+    
+    uid: {
+      type: 'string',
+      unique: true,
+      required: true
+    },
 
     guildID: {
       type: 'string',

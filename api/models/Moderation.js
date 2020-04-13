@@ -10,7 +10,7 @@ module.exports = {
   attributes: {
 
     // API note: guildID and userID should never be unique because the same user could exist in multiple moderation.
-    case: {
+    uid: {
       type: 'string',
       required: true,
       unique: true

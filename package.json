@@ -9,6 +9,8 @@
     "@sailshq/lodash": "^3.10.3",
     "@sailshq/socket.io-redis": "^5.2.0",
     "cron-parser": "^2.13.0",
+    "crypto-random": "^1.0.3",
+    "crypto-random-string": "^3.2.0",
     "discord.js": "^12.1.1",
     "grunt": "1.0.4",
     "moment": "^2.24.0",
@@ -19,7 +21,8 @@
     "sails-hook-grunt": "^4.0.0",
     "sails-hook-orm": "^2.1.1",
     "sails-hook-sockets": "^2.0.0",
-    "sails-mysql": "^1.0.1"
+    "sails-mysql": "^1.0.1",
+    "string-similarity": "^4.0.1"
   },
   "devDependencies": {
     "eslint": "5.16.0"
