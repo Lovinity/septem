@@ -28,9 +28,13 @@ module.exports = {
 
 
   fn: async function (inputs) {
-    var message = await inputs.message.reply(`:hourglass_flowing_sand: Initializing prune...`);
+    if (!await sails.helpers.permissions.checkRole(inputs.message.member, 'modRole')) {
+      return inputs.message.send(`:x: Sorry, but only members with modRole can use the prune command.`);
+    }
+
+    var message = await inputs.message.send(`:hourglass_flowing_sand: Initializing prune...`);
     await process(inputs.message, inputs.limit, inputs.filter);
-    return inputs.message.reply(`:white_check_mark: Prune operation executed. It could take a moment to finish.`);
+    return inputs.message.send(`:white_check_mark: Prune operation executed. It could take a moment to finish.`);
   }
 
 

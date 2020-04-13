@@ -36,6 +36,10 @@ module.exports.bootstrap = async function () {
     class CoolGuild extends Guild {
       constructor(client, data) {
         super(client, data);
+
+        // Initialize the guild in the cache
+        Caches.get('guilds').find([ this.id ]);
+        Caches.get('store').find([ this.id ]);
       }
 
       get settings () {
@@ -84,6 +88,9 @@ module.exports.bootstrap = async function () {
     class CoolRole extends Role {
       constructor(client, data, guild) {
         super(client, data, guild);
+
+        // Initialize the role in the cache
+        Caches.get('roles').find([ this.id, this.guild.id ]);
       }
 
       get settings () {
@@ -104,6 +111,10 @@ module.exports.bootstrap = async function () {
     class CoolGuildMember extends GuildMember {
       constructor(client, data, guild) {
         super(client, data, guild);
+
+        // Initialize the guild member in the cache
+        Caches.get('members').find([ this.id, this.guild.id ]);
+        Caches.get('profiles').find([ this.id, this.guild.id ]);
       }
 
       get settings () {
@@ -159,6 +170,9 @@ module.exports.bootstrap = async function () {
     class CoolTextChannel extends TextChannel {
       constructor(guild, data) {
         super(guild, data);
+
+        // Initialize the channel in the cache
+        Caches.get('channels').find([ this.id ]);
       }
 
       get settings () {
@@ -181,6 +195,42 @@ module.exports.bootstrap = async function () {
 
         this.cachedSpamScore = null; // This should be set to null each time spam score needs re-calculated
         this.cachedXP = null; // This should be set to null each time XP needs re-calculated
+
+        this._responses = [];
+      }
+
+      // Taken from Klasa.js
+      get responses() {
+        return this._responses.filter(msg => !msg.deleted);
+      }
+
+      // Taken from Klasa.js
+      async send(content, options) {
+        const combinedOptions = Discord.APIMessage.transformOptions(content, options);
+  
+        if ('files' in combinedOptions) return this.channel.send(combinedOptions);
+  
+        const newMessages = new Discord.APIMessage(this.channel, combinedOptions).resolveData().split()
+          .map(mes => {
+            // Command editing should always remove embeds and content if none is provided
+            mes.data.embed = mes.data.embed || null;
+            mes.data.content = mes.data.content || null;
+            return mes;
+          });
+  
+        const { responses } = this;
+        const promises = [];
+        const max = Math.max(newMessages.length, responses.length);
+  
+        for (let i = 0; i < max; i++) {
+          if (i >= newMessages.length) responses[i].delete();
+          else if (responses.length > i) promises.push(responses[i].edit(newMessages[i]));
+          else promises.push(this.channel.send(newMessages[i]));
+        }
+  
+        const newResponses = await Promise.all(promises);
+  
+        return newResponses.length === 1 ? newResponses[0] : newResponses;
       }
 
       get spamScore () {

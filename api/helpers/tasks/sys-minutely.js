@@ -82,7 +82,7 @@ Guild verification is now set down to medium (must be a Discord member for 5 or 
 ${guild.settings.raidMitigation >= 3 ? `**Please remember to re-generate invite links**. I do not re-generate those automatically. This includes the one for the website, and for any server list bots.` : ``}`);
 
           // Disable mitigation in settings
-          Caches.get('guilds').set([guild.id], () => {
+          Caches.get('guilds').set([ guild.id ], () => {
             return { raidMitigation: 0 };
           })
         }
@@ -127,7 +127,7 @@ ${guild.settings.raidMitigation >= 3 ? `**Please remember to re-generate invite 
           if (newScore < 1)
             newScore = 0;
 
-          Caches.get('members').set([member.userID, member.guildID], () => {
+          Caches.get('members').set([ member.userID, member.guildID ], () => {
             return { activityScore: newScore };
           })
         })
@@ -264,7 +264,7 @@ ${guild.settings.raidMitigation >= 3 ? `**Please remember to re-generate invite 
       DiscordClient.guilds.cache.forEach((guild) => {
 
         // Remove inactive support channels
-        guild.channels
+        guild.channels.cache
           .filter((channel) => channel.name.startsWith("support-"))
           .each((channel) => {
             if ((!channel.lastMessage && moment(channel.createdAt).add(2, 'days').isBefore(moment())) || (channel.lastMessage && moment(channel.lastMessage.createdAt).add(2, 'days').isBefore(moment()))) {
@@ -273,7 +273,7 @@ ${guild.settings.raidMitigation >= 3 ? `**Please remember to re-generate invite 
           });
 
         // Remove channels set to expire in 14 days
-        guild.channels
+        guild.channels.cache
           .filter((channel) => channel.name.endsWith("-temp14"))
           .each((channel) => {
             if (moment(channel.createdAt).add(14, 'days').isBefore(moment())) {
@@ -282,7 +282,7 @@ ${guild.settings.raidMitigation >= 3 ? `**Please remember to re-generate invite 
           });
 
         // Remove channels set to expire after 1 day of inactivity
-        guild.channels
+        guild.channels.cache
           .filter((channel) => channel.name.endsWith("-temp1"))
           .each((channel) => {
             if ((!channel.lastMessage && moment(channel.createdAt).add(1, 'days').isBefore(moment())) || (channel.lastMessage && moment(channel.lastMessage.createdAt).add(1, 'days').isBefore(moment()))) {
