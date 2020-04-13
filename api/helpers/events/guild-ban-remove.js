@@ -11,12 +11,12 @@ module.exports = {
     guild: {
       type: 'ref',
       required: true,
-      description: 'The guild banned from.'
+      description: 'The guild un-banned from.'
     },
     user: {
       type: 'ref',
       required: true,
-      description: 'The user banned.'
+      description: 'The user un-banned.'
     }
   },
 
@@ -27,7 +27,7 @@ module.exports = {
       await inputs.user.fetch();
     }
 
-    // Find out who applied the ban
+    // Find out who removed the ban
     const fetchedLogs = await inputs.guild.fetchAuditLogs({
       limit: 1,
       type: 'MEMBER_BAN_REMOVE',

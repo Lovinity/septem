@@ -24,9 +24,10 @@ module.exports.custom = {
       role: /^(?:<@&)?(\d{17,19})>?$/,
       snowflake: /^(\d{17,19})$/
     },
-    defaultPrefix: `sr!`,
+    defaultPrefix: `sr!`, // Default prefix for activating bot commands if not set in guild settings.
     token: ``, // Bot user token
     clientOwner: ``, // Snowflake ID of the bot owner
+    guildBlacklist: [], // Array of guild IDs that should not be allowed to use this bot
 
     // Words considered profane by spam detection
     profanity: [
