@@ -33,7 +33,7 @@ module.exports = {
         await sails.helpers.tasks[ inputs.record.task ].with(inputs.record.data || {});
 
         // Destroy the one-time schedule
-        await sails.models.schedules.destroy({ ID: inputs.record.id }).fetch();
+        await sails.models.schedules.destroy({ id: inputs.record.id }).fetch();
       });
 
       // Tasks that have a cron recurrence
@@ -46,7 +46,7 @@ module.exports = {
         await sails.helpers.tasks[ inputs.record.task ].with(inputs.record.data || {});
 
         // Update lastRun
-        await sails.models.schedules.update({ ID: inputs.record.id }, { lastRun: moment().toISOString(true) }).fetch();
+        await sails.models.schedules.update({ id: inputs.record.id }, { lastRun: moment().toISOString(true) }).fetch();
       });
     }
   }
