@@ -48,7 +48,7 @@ module.exports = {
       if (typeof sails.helpers.commands !== 'undefined' && typeof sails.helpers.commands[ command ] !== 'undefined') {
         commandParts[ 0 ] = inputs.message;
         try {
-          inputs.message.reply(await sails.helpers.commands[ command ](...commandParts));
+          await sails.helpers.commands[ command ](...commandParts);
         } catch (e) {
           await sails.helpers.events.error(e);
           inputs.message.reply(`:no_entry: ${e.message}`);
