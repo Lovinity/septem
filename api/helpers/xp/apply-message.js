@@ -19,9 +19,8 @@ module.exports = {
     if (!inputs.message.member)
       return;
 
+    var adjustment = inputs.message.XP;
     Caches.get('members').set([ inputs.message.member.id, inputs.message.guild.id ], () => {
-      var adjustment = inputs.message.XP - inputs.message.prevXP;
-      inputs.message.prevXP = inputs.message.XP;
       return { XP: inputs.message.member.settings.XP + adjustment, credits: inputs.message.member.settings.credits + adjustment, activityScore: inputs.message.member.settings.activityScore + adjustment };
     })
 
