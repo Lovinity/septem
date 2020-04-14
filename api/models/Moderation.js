@@ -39,16 +39,22 @@ module.exports = {
       description: 'The user ID of the person who issued this discipline.'
     },
 
-    rules: {
-      type: 'json',
-      required: true,
-      description: 'An array of rule numbers that the member violated in this discipline.'
-    },
-
     appealed: {
       type: 'boolean',
       defaultsTo: false,
       description: 'Whether or not this moderation action was appealed.'
+    },
+
+    schedule: {
+      type: 'string',
+      allowNull: true,
+      description: "The id of the schedule if one was created for this discipline."
+    },
+
+    rules: {
+      type: 'json',
+      required: true,
+      description: 'An array of rule numbers that the member violated in this discipline.'
     },
 
     reason: {
@@ -161,16 +167,16 @@ module.exports = {
       description: 'Array of quizzes this member must take.'
     },
 
-    muteUntil: {
-      type: 'ref',
-      columnType: 'datetime',
-      description: 'If this member is to be muted, the date/time this mute expires. Use the year 3000 for indefinite.'
+    muteDuration: {
+      type: 'number',
+      allowNull: true,
+      description: 'If this member is to be muted, the duration of the mute in minutes. Use 0 for indefinite.'
     },
 
-    banUntil: {
-      type: 'ref',
-      columnType: 'datetime',
-      description: 'If this member is to be banned, the date/time the ban expires. Use the year 3000 for indefinite / permanent.'
+    banDuration: {
+      type: 'number',
+      allowNull: true,
+      description: 'If this member is to be banned, the amount of time the ban should last, in days. Use 0 for permanent.'
     },
 
     additionalInformation: {
