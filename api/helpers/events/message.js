@@ -34,13 +34,12 @@ module.exports = {
     // Add spam score
     await sails.helpers.spam.applyMessage(inputs.message);
 
-    // Add XP and credits
-    await sails.helpers.xp.applyMessage(inputs.message);
-
     // Check for a command and execute it if found
     var prefix = inputs.message.guild.settings.prefix || sails.config.custom.discord.defaultPrefix;
     var command;
     var commandParts;
+
+    // Is a command
     if (inputs.message.content.startsWith(prefix)) {
       commandParts = inputs.message.content.replace(prefix, '').split(" | ");
       command = commandParts[ 0 ];
@@ -56,6 +55,15 @@ module.exports = {
       } else {
         await sails.helpers.events.warn(`Discord: command ${command} does not exist.`);
         inputs.message.reply(':x: Sorry, but that command does not exist');
+      }
+    } else { // Not a command
+
+      // Add XP and credits
+      await sails.helpers.xp.applyMessage(inputs.message);
+
+      // Activate reputation if the message earns 15 or more XP and is not considered spammy.
+      if (inputs.message.member && inputs.message.guild.settings.repEmoji && !inputs.message.author.bot && inputs.message.XP >= 15 && inputs.message.spamScore <= inputs.message.guild.settings.antispamCooldown) {
+        inputs.message.react(inputs.message.guild.settings.repEmoji);
       }
     }
   }
