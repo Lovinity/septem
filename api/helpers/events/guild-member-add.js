@@ -65,7 +65,7 @@ module.exports = {
     }
 
     // Re-assign permissions to incident channels
-    inputs.member.guild.channels
+    inputs.member.guild.channels.cache
       .filter((channel) => channel.type === 'text' && channel.guild.settings.incidentsCategory && channel.parent && channel.parent.id === channel.guild.settings.incidentsCategory && channel.topic.includes(` ${inputs.member.user.id} `))
       .each((channel) => {
         channel.createOverwrite(inputs.member, {
