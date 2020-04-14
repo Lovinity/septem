@@ -41,7 +41,7 @@ module.exports = {
 
     // Remove XP/credits
     if (typeof inputs.message.member !== 'undefined' && inputs.message.member !== null) {
-      var xp = inputs.message.prevXP;
+      var xp = inputs.message.XP;
       Caches.get('members').set([ inputs.message.member.id, inputs.message.guild.id ], () => {
         return { XP: inputs.message.member.settings.XP - xp, credits: inputs.message.member.settings.credits - xp, activityScore: inputs.message.member.settings.activityScore - xp };
       })
