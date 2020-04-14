@@ -31,7 +31,7 @@ module.exports = {
 
     // Check if the member should be muted. If so, reset all roles
     // TODO: Use muted helper
-    if (muteRole && (inputs.member.settings.muted || inputs.member.roles.get(muteRole.id))) {
+    if (muteRole && (inputs.member.settings.muted || inputs.member.roles.cache.has(muteRole.id))) {
       inputs.member.settings.update(`muted`, true, inputs.member.guild);
       inputs.member.roles.set([ inputs.member.guild.settings.muteRole ], `User supposed to be muted`);
       await sails.helpers.guild.send('modLogChannel', inputs.member.guild, `:mute: The member <@!${inputs.member.user.id}> had a mute on their account and was re-muted upon entering the guild. Check to be sure they were not trying to mute evade.`)
