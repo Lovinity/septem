@@ -24,7 +24,7 @@ module.exports = {
     }
 
     // Iterate through guild operations on bot startup
-    DiscordClient.guilds.each(async (guild) => {
+    DiscordClient.guilds.cache.each(async (guild) => {
 
       // Kick self if the guild is black listed
       if (!guild.available)
