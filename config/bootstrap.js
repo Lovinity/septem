@@ -107,7 +107,7 @@ module.exports.bootstrap = async function () {
   Caches.new('members', [ 'userID', 'guildID' ]);
   Caches.new('profiles', [ 'userID', 'guildID' ]);
   Caches.new('characters', [ 'uid' ]);
-  Caches.new('moderation', [ 'case' ]);
+  Caches.new('moderation', [ 'uid' ]);
   Discord.Structures.extend('GuildMember', GuildMember => {
     class CoolGuildMember extends GuildMember {
       constructor(client, data, guild) {

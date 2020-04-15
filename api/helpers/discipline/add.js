@@ -161,15 +161,12 @@ module.exports = {
 
 
   fn: async function (inputs) {
-    console.dir(inputs.channel);
     var uid = inputs.channel.name.split("-");
-    console.dir(uid);
     if (!uid[ 1 ]) {
       uid = await sails.helpers.uid();
     } else {
       uid = uid[ 1 ];
     }
-    console.log(uid);
 
     var guildMember = await inputs.guild.members.resolve(inputs.user);
 
@@ -365,7 +362,7 @@ module.exports = {
     }
 
     // Channel restrictions
-    if (inputs.channelRestrictions.length > 0) {
+    if (inputs.channelRestrictions && inputs.channelRestrictions.length > 0) {
       var channelNames = [];
       inputs.channelRestrictions.map(channel => {
         var theChannel = inputs.guild.channels.resolve(channel)
@@ -381,7 +378,7 @@ module.exports = {
     }
 
     // Roles
-    if (inputs.rolesAdded.length > 0) {
+    if (inputs.rolesAdded && inputs.rolesAdded.length > 0) {
       var roleNames = [];
       inputs.rolesAdded.map((permission, index) => {
         var theRole = inputs.guild.roles.resolve(permission)
@@ -401,7 +398,7 @@ module.exports = {
       })
       msg.addField(`:closed_lock_with_key: **Roles were added**`, `These roles have been added to you: ${roleNames.join(", ")}`);
     }
-    if (inputs.rolesRemoved.length > 0) {
+    if (inputs.rolesRemoved && inputs.rolesRemoved.length > 0) {
       var roleNames = [];
       inputs.rolesRemoved.map((permission, index) => {
         var theRole = inputs.guild.roles.resolve(permission)
