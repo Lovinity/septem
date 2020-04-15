@@ -16,15 +16,10 @@ module.exports = {
 
 
   fn: async function (inputs) {
-    try {
-      if (!inputs.message.member)
-        return;
+    if (!inputs.message.member)
+      return;
 
-      await sails.helpers.spam.add(inputs.message.member, inputs.message.spamScore, inputs.message);
-
-    } catch (e) {
-      sails.log.error(e);
-    }
+    await sails.helpers.spam.add(inputs.message.member, inputs.message.spamScore, inputs.message);
   }
 
 

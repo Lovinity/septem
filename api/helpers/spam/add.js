@@ -45,7 +45,7 @@ module.exports = {
 
       // Check if the score has been breached
       if (currentScore < 100 && newScore >= 100) {
-        if (inputs.member.spamScoreStamp === null || moment().subtract(1, 'minutes').isAfter(moment(inputs.member.spamScoreStamp))) {
+        if (inputs.member.settings.spamScoreStamp === null || moment().subtract(1, 'minutes').isAfter(moment(inputs.member.settings.spamScoreStamp))) {
           if (inputs.message) {
             var response = `:warning: <@${inputs.message.author.id}> **__Antispam__: Please take a break from sending/editing messages or adding reactions for about ${moment.duration(inputs.member.guild.settings.antispamCooldown > 0 ? (newScore / inputs.member.guild.settings.antispamCooldown) + 1 : 0, 'minutes').format("m [Minutes]")}**. `;
             if (isMuted) {
@@ -63,7 +63,7 @@ module.exports = {
           }
         }
         modifier.spamScoreStamp = moment().toISOString(true);
-      } else if (currentScore >= 100 && moment().subtract(10, 'seconds').isAfter(moment(inputs.member.spamScoreStamp))) {
+      } else if (currentScore >= 100 && moment().subtract(10, 'seconds').isAfter(moment(inputs.member.settings.spamScoreStamp))) {
 
         // Reset the member's spam score
         modifier.spamScore = 0;
