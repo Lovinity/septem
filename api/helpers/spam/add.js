@@ -41,7 +41,7 @@ module.exports = {
       var currentScore = inputs.member.settings.spamScore;
       var newScore = currentScore + inputs.amount;
 
-      var modifier = { spamScore: inputs.message.member.settings.spamScore + inputs.amount };
+      var modifier = { spamScore: inputs.member.settings.spamScore + inputs.amount };
 
       // Check if the score has been breached
       if (currentScore < 100 && newScore >= 100) {
