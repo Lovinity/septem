@@ -161,12 +161,15 @@ module.exports = {
 
 
   fn: async function (inputs) {
+    console.dir(inputs.channel);
     var uid = inputs.channel.name.split("-");
+    console.dir(uid);
     if (!uid[ 1 ]) {
       uid = await sails.helpers.uid();
     } else {
       uid = uid[ 1 ];
     }
+    console.log(uid);
 
     var guildMember = await inputs.guild.members.resolve(inputs.user);
 
@@ -347,7 +350,7 @@ module.exports = {
 
     // Add a schedule if a mute is in place
     if (inputs.muteDuration !== null && inputs.muteDuration > 0 && (!inputs.banDuration || !guildMember)) {
-      await sails.helpers.schedules.create({
+      await sails.models.schedules.create({
         uid: uid,
         task: 'removeMute',
         data: {
@@ -503,7 +506,7 @@ module.exports = {
 
         // Add a schedule if the ban is limited duration
         if (inputs.banDuration > 0) {
-          await sails.helpers.schedules.create({
+          await sails.models.schedules.create({
             uid: uid,
             task: 'removeBan',
             data: {
