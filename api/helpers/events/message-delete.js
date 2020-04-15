@@ -42,7 +42,7 @@ module.exports = {
     // Remove XP/credits
     await sails.helpers.xp.removeMessage(inputs.message);
 
-    // Remove all good rep earned from reactions, if any.
+    // Remove all rep earned from reactions, if any.
     await sails.helpers.reputation.removeAll(inputs.message);
 
     // Remove all starboard

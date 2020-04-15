@@ -52,6 +52,13 @@ module.exports = {
       description: 'Members earn spam score for their messages; the more spammy, the more points. Breaking 100 triggers an antispam verbal warning, continuing without waiting a few minutes results in antispam discipline.'
     },
 
+    spamScoreStamp: {
+      type: 'ref',
+      columnType: 'datetime',
+      defaultsTo: moment().toISOString(true),
+      description: 'Date/time when the member last received a nudge by the bot for spam.'
+    },
+
     activityScore: {
       type: 'number',
       min: 0,

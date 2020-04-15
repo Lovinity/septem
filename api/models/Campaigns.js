@@ -38,18 +38,18 @@ module.exports = {
       description: 'The current date/time of the session.'
     },
 
-    antagonistMP: {
+    antagonistCP: {
       type: 'number',
       min: 0,
       defaultsTo: 50,
-      description: 'Amount of MP available for the antagonist team.'
+      description: 'Amount of CP available for the antagonist team.'
     },
 
-    protagonistMP: {
+    protagonistCP: {
       type: 'number',
       min: 0,
       defaultsTo: 50,
-      description: 'Amount of MP available to the protagonist team.'
+      description: 'Amount of CP available to the protagonist team.'
     },
 
     sessionActive: {

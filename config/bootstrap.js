@@ -12,6 +12,7 @@
 // Globals
 global[ 'Discord' ] = require('discord.js');
 global[ 'moment' ] = require('moment');
+require('moment-duration-format');
 var CacheManager = require('../util/Cache');
 global[ 'Caches' ] = new CacheManager();
 global[ 'Schedules' ] = {};
@@ -217,16 +218,16 @@ module.exports.bootstrap = async function () {
       }
 
       // Taken from Klasa.js
-      get responses() {
+      get responses () {
         return this._responses.filter(msg => !msg.deleted);
       }
 
       // Taken from Klasa.js
-      async send(content, options) {
+      async send (content, options) {
         const combinedOptions = Discord.APIMessage.transformOptions(content, options);
-  
+
         if ('files' in combinedOptions) return this.channel.send(combinedOptions);
-  
+
         const newMessages = new Discord.APIMessage(this.channel, combinedOptions).resolveData().split()
           .map(mes => {
             // Command editing should always remove embeds and content if none is provided
@@ -234,20 +235,20 @@ module.exports.bootstrap = async function () {
             mes.data.content = mes.data.content || null;
             return mes;
           });
-  
+
         const { responses } = this;
         const promises = [];
         const max = Math.max(newMessages.length, responses.length);
-  
+
         for (let i = 0; i < max; i++) {
-          if (i >= newMessages.length) responses[i].delete();
-          else if (responses.length > i) promises.push(responses[i].edit(newMessages[i]));
-          else promises.push(this.channel.send(newMessages[i]));
+          if (i >= newMessages.length) responses[ i ].delete();
+          else if (responses.length > i) promises.push(responses[ i ].edit(newMessages[ i ]));
+          else promises.push(this.channel.send(newMessages[ i ]));
         }
-  
+
         const newResponses = await Promise.all(promises);
-  
-        return newResponses.length === 1 ? newResponses[0] : newResponses;
+
+        return newResponses.length === 1 ? newResponses[ 0 ] : newResponses;
       }
 
       get spamScore () {
