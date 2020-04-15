@@ -32,7 +32,7 @@ module.exports = {
     if (!inputs.reaction.message.member)
       return null;
 
-    var reactionMember = inputs.reaction.message.guild.members.resolve(user);
+    var reactionMember = inputs.reaction.message.guild.members.resolve(inputs.user);
 
     // Add rep if this is a rep earning message
     if (inputs.user.id !== DiscordClient.user.id && inputs.reaction.emoji.id === inputs.reaction.message.guild.settings.repEmoji) {
@@ -50,10 +50,10 @@ module.exports = {
           setTimeout(() => {
             _msg.delete();
           }, 10000);
-          inputs.reaction.users.remove(user);
+          inputs.reaction.users.remove(inputs.user);
         }
       } else {
-        inputs.reaction.users.remove(user);
+        inputs.reaction.users.remove(inputs.user);
         if (inputs.reaction.message.author.id === inputs.user.id) {
           var _msg = await inputs.reaction.message.send(`:lock: Sorry <@${inputs.user.id}>, but you can't give reputation to yourself.`);
           setTimeout(() => {
