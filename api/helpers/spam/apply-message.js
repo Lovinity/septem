@@ -20,10 +20,7 @@ module.exports = {
       if (!inputs.message.member)
         return;
 
-      Caches.get('members').set([ inputs.message.member.id, inputs.message.guild.id ], () => {
-        var adjustment = inputs.message.spamScore - inputs.message.prevSpamScore;
-        return { spamScore: inputs.message.member.settings.spamScore + adjustment }
-      })
+      await sails.helpers.spam.add(inputs.message.member, inputs.message.spamScore, inputs.message);
 
     } catch (e) {
       sails.log.error(e);
