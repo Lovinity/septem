@@ -39,7 +39,7 @@ module.exports = {
         }
       }
 
-      if (typeof inputs.message.member !== 'undefined' && inputs.message.member !== null && inputs.message.author.id !== this.client.user.id) {
+      if (typeof inputs.message.member !== 'undefined' && inputs.message.member !== null && inputs.message.author.id !== DiscordClient.user.id) {
         // Remove all reactions to reset reputation
         inputs.message.reactions.removeAll();
 
@@ -61,7 +61,7 @@ module.exports = {
     }
 
     // Skip the bot
-    if (inputs.message.author.id === this.client.user.id)
+    if (inputs.message.author.id === DiscordClient.user.id)
       return;
 
     var display = new Discord.MessageEmbed()
