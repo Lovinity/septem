@@ -35,6 +35,8 @@ module.exports = {
         var newscore = inputs.message.spamScore;
         if (newscore > oldscore) {
           var diff = newscore - oldscore;
+          console.log(`Spam difference`)
+          console.log(diff);
           await sails.helpers.spam.add(inputs.message.member, diff, inputs.message);
         }
       }
@@ -51,6 +53,8 @@ module.exports = {
         } else if (inputs.message.member && !inputs.message.author.bot && xp2 >= 15) {
           inputs.message.react(inputs.message.guild.settings.repEmoji);
         }
+        console.log(`XP difference`)
+        console.log(xp2 - xp1);
         // Change XP and credits
         if (xp2 - xp1 !== 0) {
           await sails.helpers.xp.change(inputs.message.member, xp2 - xp1);
