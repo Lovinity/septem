@@ -182,6 +182,7 @@ module.exports = {
     additionalInformation: {
       type: 'string',
       maxLength: 1024,
+      allowNull: true,
       description: 'Additional information, such as other discipline issued.'
     },
 

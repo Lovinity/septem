@@ -170,10 +170,12 @@ module.exports.bootstrap = async function () {
       }
 
       guildHP (guildID) {
-        var member = Caches.get('members').find([ this.id, guildID ]);
-        var damage = member.settings.damage;
-        var decay = member.guild.settings.XPForOneHP;
-        var HP = (100 + Math.floor(decay > 0 ? member.settings.XP / decay : 0)) - damage;
+        var guild = client.guilds.resolve(guildID);
+        if (!guild) return 0;
+        var settings = Caches.get('members').find([ this.id, guildID ]);
+        var damage = settings.damage;
+        var decay = guild.settings.XPForOneHP;
+        var HP = (100 + Math.floor(decay > 0 ? settings.XP / decay : 0)) - damage;
         if (HP < 0) HP = 0;
         return HP;
       }
