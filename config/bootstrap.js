@@ -209,10 +209,6 @@ module.exports.bootstrap = async function () {
       constructor(client, data, channel) {
         super(client, data, channel);
 
-        // These values are set after handling them, not in the class
-        this.prevSpamScore = 0;
-        this.prevXP = 0;
-
         this.cachedSpamScore = null; // This should be set to null each time spam score needs re-calculated
         this.cachedXP = null; // This should be set to null each time XP needs re-calculated
 

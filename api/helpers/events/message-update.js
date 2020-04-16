@@ -28,6 +28,10 @@ module.exports = {
       await inputs.message.fetch();
     }
 
+    // Reset cached calculated values; they must be re-calculated.
+    inputs.message.cachedSpamScore = null;
+    inputs.message.cachedXP = null;
+
     // First, update spam score if new score is bigger than old score. Do NOT update if new score is less than old score; we don't want to lower it.
     try {
       if (inputs.message.type === 'DEFAULT' && typeof inputs.message.member !== 'undefined' && inputs.message.member !== null) {
