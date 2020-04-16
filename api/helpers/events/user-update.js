@@ -27,7 +27,7 @@ module.exports = {
     }
 
     // Add event logs to guilds if things changed
-    this.client.guilds.cache
+    DiscordClient.guilds.cache
       .filter((guild) => guild.members.resolve(inputs.newUser.id))
       .each(async (guild) => {
         // Add an event log if the user's tag changed
