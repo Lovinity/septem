@@ -25,7 +25,7 @@ module.exports = {
 
     // Update the score.
     var currentScore = inputs.guild.settings.raidScore;
-    var newScore = currentScore + score;
+    var newScore = currentScore + inputs.amount;
     Caches.get('guilds').set([ inputs.guild.id ], () => {
       return { raidScore: newScore };
     });
