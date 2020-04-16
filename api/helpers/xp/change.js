@@ -22,7 +22,7 @@ module.exports = {
 
 
   fn: async function (inputs) {
-    Caches.get('members').set([ inputs.member.userID, inputs.member.guildID ], () => {
+    Caches.get('members').set([ inputs.member.id, inputs.member.guild.id ], () => {
       return { XP: inputs.member.settings.XP + inputs.amount, credits: inputs.member.settings.XP + inputs.amount, activityScore: inputs.member.settings.XP + inputs.amount };
     })
 
