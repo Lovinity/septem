@@ -22,6 +22,9 @@ module.exports = {
 
 
   fn: async function (inputs) {
+    console.dir(inputs.old);
+    console.dir(inputs.message);
+    
     var jsdiff = require('diff');
     // Upgrade partial messages to full messages
     if (inputs.message.partial) {
@@ -33,13 +36,8 @@ module.exports = {
       if (inputs.message.type === 'DEFAULT' && typeof inputs.message.member !== 'undefined' && inputs.message.member !== null) {
         var oldscore = inputs.old.spamScore || inputs.message.spamScore;
         var newscore = inputs.message.spamScore;
-        console.log(`Spam scores`);
-        console.log(oldscore);
-        console.log(newscore);
         if (newscore > oldscore) {
           var diff = newscore - oldscore;
-          console.log(`Spam difference`)
-          console.log(diff);
           await sails.helpers.spam.add(inputs.message.member, diff, inputs.message);
         }
       }
@@ -56,8 +54,6 @@ module.exports = {
         } else if (inputs.message.member && !inputs.message.author.bot && xp2 >= 15) {
           inputs.message.react(inputs.message.guild.settings.repEmoji);
         }
-        console.log(`XP difference`)
-        console.log(xp2 - xp1);
         // Change XP and credits
         if (xp2 - xp1 !== 0) {
           await sails.helpers.xp.change(inputs.message.member, xp2 - xp1);
