@@ -170,7 +170,7 @@ module.exports.bootstrap = async function () {
       }
 
       guildHP (guildID) {
-        var guild = client.guilds.resolve(guildID);
+        var guild = DiscordClient.guilds.resolve(guildID);
         if (!guild) return 0;
         var settings = Caches.get('members').find([ this.id, guildID ]);
         var damage = settings.damage;
