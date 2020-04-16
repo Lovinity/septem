@@ -11,6 +11,7 @@
     "cron-parser": "^2.13.0",
     "crypto-random": "^1.0.3",
     "crypto-random-string": "^3.2.0",
+    "diff": "^4.0.2",
     "discord.js": "^12.1.1",
     "grunt": "1.0.4",
     "moment": "^2.24.0",
