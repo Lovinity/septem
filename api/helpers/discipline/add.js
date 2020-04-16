@@ -516,40 +516,40 @@ module.exports = {
             return { schedule: uid }
           })
         }
-
-        // Add raid score
-        switch (type) {
-          case 'Warning':
-          case 'Basic Discipline':
-            await sails.helpers.guild.addRaidScore(inputs.guild, 10);
-            break;
-          case 'Antispam Discipline':
-          case 'Reflection / Research':
-          case 'Access Restrictions':
-            await sails.helpers.guild.addRaidScore(inputs.guild, 20);
-            break;
-          case 'Ban':
-          case 'Investigation':
-            await sails.helpers.guild.addRaidScore(inputs.guild, 30);
-            break;
-          default:
-            await sails.helpers.guild.addRaidScore(inputs.guild, 10);
-            break;
-        }
-
-        // Post in the incidents channel
-        inputs.channel.send(`<@${inputs.user.id}>, you have been issued a disciplinary notice. It is posted as an embed below.
-        If you cannot see the information below, please go in your Discord settings -> App Settings -> Text & Images, and enable the __Show website preview info from links pasted into chat__ option.`, {
-          split: true,
-          embed: msg
-        });
-
-        // Post in the mod log channel
-        await sails.helpers.guild.send('modLogChannel', inputs.guild, `:warning: Discipline was issued against ${inputs.user.tag} (${inputs.user.id}). Below is an embed of their disciplinary message.`, { embed: msg })
-
-        // Post in the public channel
-        await sails.helpers.guild.send('modLogPublicChannel', inputs.guild, publicString);
       }
+
+      // Add raid score
+      switch (type) {
+        case 'Warning':
+        case 'Basic Discipline':
+          await sails.helpers.guild.addRaidScore(inputs.guild, 10);
+          break;
+        case 'Antispam Discipline':
+        case 'Reflection / Research':
+        case 'Access Restrictions':
+          await sails.helpers.guild.addRaidScore(inputs.guild, 20);
+          break;
+        case 'Ban':
+        case 'Investigation':
+          await sails.helpers.guild.addRaidScore(inputs.guild, 30);
+          break;
+        default:
+          await sails.helpers.guild.addRaidScore(inputs.guild, 10);
+          break;
+      }
+
+      // Post in the incidents channel
+      inputs.channel.send(`<@${inputs.user.id}>, you have been issued a disciplinary notice. It is posted as an embed below.
+        If you cannot see the information below, please go in your Discord settings -> App Settings -> Text & Images, and enable the __Show website preview info from links pasted into chat__ option.`, {
+        split: true,
+        embed: msg
+      });
+
+      // Post in the mod log channel
+      await sails.helpers.guild.send('modLogChannel', inputs.guild, `:warning: Discipline was issued against ${inputs.user.tag} (${inputs.user.id}). Below is an embed of their disciplinary message.`, { embed: msg })
+
+      // Post in the public channel
+      await sails.helpers.guild.send('modLogPublicChannel', inputs.guild, publicString);
     }
   }
 
