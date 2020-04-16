@@ -22,9 +22,6 @@ module.exports = {
 
 
   fn: async function (inputs) {
-    console.dir(inputs.old);
-    console.dir(inputs.message);
-    
     var jsdiff = require('diff');
     // Upgrade partial messages to full messages
     if (inputs.message.partial) {
