@@ -31,7 +31,7 @@ module.exports = {
     // First, update spam score if new score is bigger than old score. Do NOT update if new score is less than old score; we don't want to lower it.
     try {
       if (inputs.message.type === 'DEFAULT' && typeof inputs.message.member !== 'undefined' && inputs.message.member !== null) {
-        var oldscore = inputs.old.partial ? 1000000 : inputs.old.spamScore;
+        var oldscore = inputs.old.spamScore || inputs.message.spamScore;
         var newscore = inputs.message.spamScore;
         console.log(`Spam scores`);
         console.log(oldscore);
@@ -48,7 +48,7 @@ module.exports = {
         // Remove all reactions to reset reputation
         inputs.message.reactions.removeAll();
 
-        var xp1 = inputs.old.partial ? inputs.message.XP : inputs.old.XP;
+        var xp1 = inputs.old.XP || inputs.message.XP;
         var xp2 = inputs.message.XP;
         if (newscore > inputs.message.guild.settings.antispamCooldown) {
           xp2 = 0;
