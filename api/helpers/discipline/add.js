@@ -520,7 +520,7 @@ module.exports = {
     }
 
     // Add raid score
-    switch (type) {
+    switch (inputs.type) {
       case 'Warning':
       case 'Basic Discipline':
         await sails.helpers.guild.addRaidScore(inputs.guild, 10);
