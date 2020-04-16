@@ -33,6 +33,9 @@ module.exports = {
       if (inputs.message.type === 'DEFAULT' && typeof inputs.message.member !== 'undefined' && inputs.message.member !== null) {
         var oldscore = inputs.old.partial ? 1000000 : inputs.old.spamScore;
         var newscore = inputs.message.spamScore;
+        console.log(`Spam scores`);
+        console.log(oldscore);
+        console.log(newscore);
         if (newscore > oldscore) {
           var diff = newscore - oldscore;
           console.log(`Spam difference`)
