@@ -236,6 +236,8 @@ ${guild.settings.raidMitigation >= 3 ? `**Please remember to re-generate invite 
             return;
 
           var guildMember = guild.members.resolve(member.userID);
+          if (guildMember.user.bot)
+            return;
           guildMember.roles.add(guild.settings.inactiveRole, 'New member inactive for 7 days');
           var channel = await sails.helpers.incidents.createChannel('inactive', guild, [ guildMember ]);
           channel.send(`:zzz: **__YOU JOINED OVER 7 DAYS AGO WITHOUT SENDING YOUR FIRST MESSAGE__** :zzz:
@@ -253,6 +255,8 @@ ${guild.settings.raidMitigation >= 3 ? `**Please remember to re-generate invite 
             return;
 
           var guildMember = guild.members.resolve(member.userID);
+          if (guildMember.user.bot)
+            return;
           guildMember.roles.add(guild.settings.inactiveRole, 'Old member inactive for 30 days');
           var channel = await sails.helpers.incidents.createChannel('inactive', guild, [ guildMember ]);
           channel.send(`:zzz: **__YOU HAVE NOT SENT ANY MESSAGES FOR OVER 30 DAYS__** :zzz:
