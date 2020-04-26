@@ -40,7 +40,7 @@ module.exports = {
       }
     }
 
-    var member = await sails.helpers.resolvers.username(inputs.member);
+    var member = await sails.helpers.resolvers.username(inputs.message, inputs.member);
 
     // Grant permissions
     inputs.message.channel.createOverwrite(member, {
