@@ -39,22 +39,24 @@ module.exports = {
     var command;
     var commandParts;
 
-    // Is a command
+    // Is a command by a guild member who is not a bot
     if (inputs.message.content.startsWith(prefix)) {
-      commandParts = inputs.message.content.replace(prefix, '').split(" | ");
-      command = commandParts[ 0 ];
-      sails.log.debug(`Discord: command executed: ${command}, by ${inputs.message.author.tag}`);
-      if (typeof sails.helpers.commands !== 'undefined' && typeof sails.helpers.commands[ command ] !== 'undefined') {
-        commandParts[ 0 ] = inputs.message;
-        try {
-          await sails.helpers.commands[ command ](...commandParts);
-        } catch (e) {
-          await sails.helpers.events.error(e);
-          inputs.message.reply(`:no_entry: ${e.message}`);
+      if (inputs.message.member && inputs.message.author && !inputs.message.author.bot) {
+        commandParts = inputs.message.content.replace(prefix, '').split(" | ");
+        command = commandParts[ 0 ];
+        sails.log.debug(`Discord: command executed: ${command}, by ${inputs.message.author.tag}`);
+        if (typeof sails.helpers.commands !== 'undefined' && typeof sails.helpers.commands[ command ] !== 'undefined') {
+          commandParts[ 0 ] = inputs.message;
+          try {
+            await sails.helpers.commands[ command ](...commandParts);
+          } catch (e) {
+            await sails.helpers.events.error(e);
+            inputs.message.reply(`:no_entry: ${e.message}`);
+          }
+        } else {
+          await sails.helpers.events.warn(`Discord: command ${command} does not exist.`);
+          inputs.message.reply(':x: Sorry, but that command does not exist');
         }
-      } else {
-        await sails.helpers.events.warn(`Discord: command ${command} does not exist.`);
-        inputs.message.reply(':x: Sorry, but that command does not exist');
       }
     } else { // Not a command
 

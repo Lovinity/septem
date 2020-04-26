@@ -118,10 +118,16 @@ module.exports = {
       description: 'The ID of the voice channel used for official campaign sessions.'
     },
 
+    statsChannel: {
+      type: 'string',
+      allowNull: true,
+      description: 'The channel ID of where the stats message updated every minute should be placed.'
+    },
+
     statsMessage: {
       type: 'string',
       allowNull: true,
-      description: 'The channelID.messageID of the message authored by the bot to edit with the current guild stats every minute.'
+      description: 'The ID of the stats message.'
     },
 
     repEmoji: {

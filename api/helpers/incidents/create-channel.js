@@ -95,7 +95,7 @@ module.exports = {
     // Create the channel
     return await inputs.guild.channels.create(`${inputs.type}-${await sails.helpers.uid()}`, {
       type: 'text',
-      topic: `${inputs.type} channel. Members: ( ${memberString.join(" ")} )`,
+      topic: `${inputs.type} channel. Members: ${memberString.join(" ")} `,
       parent: inputs.guild.settings.incidentsCategory,
       permissionOverwrites: overwrites,
       rateLimitPerUser: 15,
