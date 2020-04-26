@@ -21,7 +21,6 @@ module.exports = {
     },
     members: {
       type: 'ref',
-      required: true,
       description: 'Array of members involved in automatic functionality for this channel (support/inquiry = initiator, interrogation/discipline/inactive = involved members)'
     },
   },

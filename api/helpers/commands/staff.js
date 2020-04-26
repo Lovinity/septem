@@ -16,8 +16,12 @@ module.exports = {
 
 
   fn: async function (inputs) {
+    // Delete original message for confidentiality
+    await inputs.message.delete();
+
     // Check restrictions
     if (await sails.helpers.moderation.checkRestriction(inputs.message.member.moderation, 'cannotUseStaffCommand')) {
+      await sails.helpers.spam.add(inputs.message.member, 20, inputs.message);
       return inputs.message.send(`:x: You are not allowed to use the staff command. Please contact staff in a DM if you have a legitimate inquiry.`);
     }
 
@@ -27,6 +31,7 @@ module.exports = {
     if (!isStaff) {
       var channels = guild.channels.cache.filter((channel) => channel.type === 'text' && channel.guild.settings.incidentsCategory && channel.parent && channel.parent.id === channel.guild.settings.incidentsCategory && channel.name.startsWith('inquiry-') && channel.topic.includes(` ${inputs.member.user.id} `));
       if (channels.length > 2) {
+        await sails.helpers.spam.add(inputs.message.member, 20, inputs.message);
         return inputs.message.send(`:x: To prevent channel flooding, members are not allowed to have more than 3 open inquiry channels.`);
       }
     }

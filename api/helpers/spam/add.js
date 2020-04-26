@@ -82,6 +82,7 @@ module.exports = {
         if (inputs.member.guild.settings.raidMitigation < 1 && !HPThreshold) {
           (async () => {
             var channel = await sails.helpers.incidents.createChannel('discipline', inputs.member.guild, [ inputs.member ]);
+            await sails.helpers.permissions.addRole(inputs.member, 'muteRole', `Triggered the antispam (${channel.id})`);
             await sails.helpers.discipline.add.with({
               channel: channel,
               user: inputs.member.user,
@@ -117,6 +118,7 @@ module.exports = {
         } else if (inputs.member.guild.settings.raidMitigation < 1 && HPThreshold) {
           (async () => {
             var channel = await sails.helpers.incidents.createChannel('discipline', inputs.member.guild, [ inputs.member ]);
+            await sails.helpers.permissions.addRole(inputs.member, 'muteRole', `Triggered the antispam (${channel.id})`);
             await sails.helpers.discipline.add.with({
               channel: channel,
               user: inputs.member.user,
@@ -152,6 +154,7 @@ module.exports = {
         } else if (inputs.member.guild.settings.raidMitigation < 2) {
           (async () => {
             var channel = await sails.helpers.incidents.createChannel('discipline', inputs.member.guild, [ inputs.member ]);
+            await sails.helpers.permissions.addRole(inputs.member, 'muteRole', `Triggered the antispam (${channel.id})`);
             await sails.helpers.discipline.add.with({
               channel: channel,
               user: inputs.member.user,
@@ -187,6 +190,7 @@ module.exports = {
         } else if (inputs.member.guild.settings.raidMitigation < 3) {
           (async () => {
             var channel = await sails.helpers.incidents.createChannel('discipline', inputs.member.guild, [ inputs.member ]);
+            await sails.helpers.permissions.addRole(inputs.member, 'muteRole', `Triggered the antispam (${channel.id})`);
             await sails.helpers.discipline.add.with({
               channel: channel,
               user: inputs.member.user,
@@ -222,6 +226,7 @@ module.exports = {
         } else if (inputs.member.guild.settings.raidMitigation >= 3) {
           (async () => {
             var channel = await sails.helpers.incidents.createChannel('discipline', inputs.member.guild, [ inputs.member ]);
+            await sails.helpers.permissions.addRole(inputs.member, 'muteRole', `Triggered the antispam (${channel.id})`);
             await sails.helpers.discipline.add.with({
               channel: channel,
               user: inputs.member.user,
