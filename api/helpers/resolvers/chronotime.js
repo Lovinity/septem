@@ -1,3 +1,5 @@
+const chrono = require('chrono-node');
+
 module.exports = {
 
 
@@ -16,8 +18,6 @@ module.exports = {
 
 
   fn: async function (inputs) {
-    const chrono = require('chrono-node');
-
     let date = chrono.parseDate(inputs.date, new Date(), { forwardDate: true });
 
     if (date === null)

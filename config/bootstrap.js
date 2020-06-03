@@ -534,11 +534,11 @@ module.exports.bootstrap = async function () {
   */
 
   // Initialize cron schedules
-  await sails.models.schedules.findOrCreate({ uid: 'SYS-MINUTELY' }, { uid: 'SYS-MINUTELY', task: 'sysMinutely', cron: '* * * * *' });
   var records = await sails.models.schedules.find();
   records.forEach(async (record) => {
-    Schedules[ record.id ] = await sails.helpers.schedules.add(record);
+    await sails.helpers.schedules.add(record);
   });
+  await sails.models.schedules.findOrCreate({ uid: 'SYS-MINUTELY' }, { uid: 'SYS-MINUTELY', task: 'sysMinutely', cron: '* * * * *' });
 
 };
 
