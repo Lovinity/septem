@@ -21,9 +21,7 @@ module.exports = {
       return;
 
     var xp = inputs.message.XP;
-    Caches.get('members').set([ inputs.message.member.id, inputs.message.guild.id ], () => {
-      return { XP: inputs.message.member.settings.XP - xp, credits: inputs.message.member.settings.credits - xp, activityScore: inputs.message.member.settings.activityScore - xp };
-    })
+    Caches.get('members').set([ inputs.message.member.id, inputs.message.guild.id ], { XP: inputs.message.member.settings.XP - xp, credits: inputs.message.member.settings.credits - xp, activityScore: inputs.message.member.settings.activityScore - xp });
 
     await sails.helpers.xp.checkRoles(inputs.message.member);
   }

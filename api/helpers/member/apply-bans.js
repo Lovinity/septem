@@ -35,9 +35,7 @@ module.exports = {
               },
               nextRun: moment().add(ban.duration, 'days').toDate()
             });
-            Caches.get('moderation').set([ ban.case ], () => {
-              return { schedule: uid }
-            })
+            Caches.get('moderation').set([ ban.case ], { schedule: uid });
           }
         }
       });

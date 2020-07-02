@@ -245,7 +245,7 @@ module.exports = {
 
     XPForOneHP: {
       type: 'number',
-      defaultsTo: 50,
+      defaultsTo: 250,
       min: 1,
       description: 'The amount of XP required for a member to earn 1 HP.'
     },

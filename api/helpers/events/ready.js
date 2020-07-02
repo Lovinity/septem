@@ -55,21 +55,17 @@ module.exports = {
           if (muteRole && (guildMember.settings.muted || guildMember.roles.cache.has(muteRole.id))) {
             if (!guildMember.roles.cache.has(muteRole.id))
               await sails.helpers.guild.send('modLogChannel', guild, `:mute: The member <@!${guildMember.user.id}> had a mute on their account and was re-muted upon the bot restarting. Check to be sure they were not trying to mute evade.`)
-            Caches.get('members').set([ guildMember.id, guild.id ], () => {
-              return { muted: true };
-            });
+            Caches.get('members').set([ guildMember.id, guild.id ], { muted: true });
             guildMember.roles.set([ guild.settings.muteRole ], `User supposed to be muted`);
           } else {
             // Member has the verified role. Update database with the current roles set in case anything changed since bot was down.
             if (verifiedRole && guildMember.roles.cache.has(verifiedRole.id)) {
-              Caches.get('members').set([ guildMember.id, guild.id ], () => {
-                var roles = [];
-                guildMember.roles.cache.each((role) => {
-                  if (role.id !== guildMember.guild.roles.everyone.id && role.id !== guildMember.guild.settings.muteRole)
-                    roles.push(role.id);
-                });
-                return { verified: true, roles: roles };
+              var roles = [];
+              guildMember.roles.cache.each((role) => {
+                if (role.id !== guildMember.guild.roles.everyone.id && role.id !== guildMember.guild.settings.muteRole)
+                  roles.push(role.id);
               });
+              Caches.get('members').set([ guildMember.id, guild.id ], { verified: true, roles: roles });
 
               // Member does not have verified role but has passed the verification stage, so add all roles from the database
             } else if (guildMember.settings.verified) {

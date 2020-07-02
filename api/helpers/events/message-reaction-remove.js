@@ -37,9 +37,7 @@ module.exports = {
       var removeRep = inputs.reaction.me;
 
       if (removeRep && !inputs.user.bot && inputs.reaction.message.author.id !== inputs.user.id && inputs.reaction.emoji.id === inputs.reaction.message.guild.settings.repEmoji && reactionMember && !await sails.helpers.moderation.checkRestriction(reactionMember.moderation, 'cannotGiveReputation')) {
-        Caches.get('members').set([ inputs.reaction.message.member.id, inputs.reaction.message.guild.id ], () => {
-          return { reputation: inputs.reaction.message.member.settings.reputation - 1 };
-        })
+        Caches.get('members').set([ inputs.reaction.message.member.id, inputs.reaction.message.guild.id ], { reputation: inputs.reaction.message.member.settings.reputation - 1 });
       }
     }
 

@@ -10,7 +10,7 @@ module.exports = {
   inputs: {
     record: {
       type: 'json',
-      require: true,
+      required: true,
       description: 'The schedules database record'
     }
   },
@@ -18,8 +18,8 @@ module.exports = {
 
   fn: async function (inputs) {
     // Remove the schedule
-    if (typeof Schedules[ inputs.record.id ] !== undefined) {
-      Schedules[ inputs.record.id ].cancel();
+    if (typeof Schedules[ inputs.record.id ] !== 'undefined') {
+      Schedules[ inputs.record.id ].stop();
       delete Schedules[ inputs.record.id ];
     }
   }

@@ -24,9 +24,7 @@ module.exports = {
         if (newScore < 0)
           newScore = 0;
 
-        Caches.get('members').set([ member.userID, member.guildID ], () => {
-          return { spamScore: newScore };
-        })
+        Caches.get('members').set([ member.userID, member.guildID ], { spamScore: newScore });
       })
 
     // minutely guild tasks
@@ -48,9 +46,7 @@ module.exports = {
         if (newscore < 0)
           newscore = 0;
 
-        Caches.get('guilds').set([ guild.id ], () => {
-          return { raidScore: newscore };
-        })
+        Caches.get('guilds').set([ guild.id ], { raidScore: newscore });
 
         if (newscore <= 0 && guild.settings.raidMitigation > 0) {
 
@@ -82,9 +78,7 @@ Guild verification is now set down to medium (must be a Discord member for 5 or 
 ${guild.settings.raidMitigation >= 3 ? `**Please remember to re-generate invite links**. I do not re-generate those automatically. This includes the one for the website, and for any server list bots.` : ``}`);
 
           // Disable mitigation in settings
-          Caches.get('guilds').set([ guild.id ], () => {
-            return { raidMitigation: 0 };
-          })
+          Caches.get('guilds').set([ guild.id ], { raidMitigation: 0 });
         }
       }
 
@@ -127,9 +121,7 @@ ${guild.settings.raidMitigation >= 3 ? `**Please remember to re-generate invite 
           if (newScore < 1)
             newScore = 0;
 
-          Caches.get('members').set([ member.userID, member.guildID ], () => {
-            return { activityScore: newScore };
-          })
+          Caches.get('members').set([ member.userID, member.guildID ], { activityScore: newScore });
         })
     }
 

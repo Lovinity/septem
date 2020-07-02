@@ -27,9 +27,7 @@ module.exports = {
     }
 
     // Update last active
-    Caches.get('members').set([ inputs.message.member.id, inputs.message.guild.id ], () => {
-      return { lastActive: moment().toISOString(true) };
-    });
+    Caches.get('members').set([ inputs.message.member.id, inputs.message.guild.id ], { lastActive: moment().toISOString(true) });
 
     // Add spam score
     await sails.helpers.spam.applyMessage(inputs.message);

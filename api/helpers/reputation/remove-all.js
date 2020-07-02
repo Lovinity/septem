@@ -31,9 +31,7 @@ module.exports = {
           .each(async (reaction) => {
             reaction.users.cache.each(async (reactionUser) => {
               if (!reactionUser.bot && !await sails.helpers.moderation.checkRestriction(reactionUser.guildModeration(inputs.message.guild.id), 'cannotGiveReputation'))
-                Caches.get('members').set([ inputs.message.member.id, inputs.message.guild.id ], () => {
-                  return { reputation: inputs.message.member.settings.reputation - 1 };
-                })
+                Caches.get('members').set([ inputs.message.member.id, inputs.message.guild.id ], { reputation: inputs.message.member.settings.reputation - 1 });
             });
           });
       }

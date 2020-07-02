@@ -41,9 +41,7 @@ module.exports = {
       // Make sure this user can actually give reputation
       if (reactionMember && addRep && inputs.reaction.message.author.id !== inputs.user.id) {
         if (!await sails.helpers.moderation.checkRestriction(reactionMember.moderation, 'cannotGiveReputation') && !inputs.user.bot) {
-          Caches.get('members').set([ inputs.reaction.message.member.id, inputs.reaction.message.guild.id ], () => {
-            return { reputation: inputs.reaction.message.member.settings.reputation + 1 };
-          })
+          Caches.get('members').set([ inputs.reaction.message.member.id, inputs.reaction.message.guild.id ], { reputation: inputs.reaction.message.member.settings.reputation + 1 });
         } else {
           await sails.helpers.spam.add(inputs.reaction.message.member, 25);
           var _msg = await inputs.reaction.message.send(`:lock: Sorry <@${inputs.user.id}>, but you are not allowed to give reputation to other members.`);

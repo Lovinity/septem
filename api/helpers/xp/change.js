@@ -22,9 +22,7 @@ module.exports = {
 
 
   fn: async function (inputs) {
-    Caches.get('members').set([ inputs.member.id, inputs.member.guild.id ], () => {
-      return { XP: inputs.member.settings.XP + inputs.amount, credits: inputs.member.settings.credits + inputs.amount, activityScore: inputs.member.settings.activityScore + inputs.amount };
-    })
+    Caches.get('members').set([ inputs.member.id, inputs.member.guild.id ], { XP: inputs.member.settings.XP + inputs.amount, credits: inputs.member.settings.credits + inputs.amount, activityScore: inputs.member.settings.activityScore + inputs.amount });
 
     await sails.helpers.xp.checkRoles(inputs.member);
   }

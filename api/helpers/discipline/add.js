@@ -180,38 +180,36 @@ module.exports = {
       .setURL(`${sails.config.custom.baseURL}/modlogs.html?user=${inputs.user.id}`);
 
     // Init the log
-    Caches.get('moderation').set([ uid ], () => {
-      return {
-        userID: inputs.user.id,
-        guildID: inputs.guild.id,
-        type: inputs.type,
-        issuer: inputs.issuer.id,
-        appealed: false,
-        rules: inputs.rules,
-        reason: inputs.reason,
-        XP: inputs.XP,
-        credits: inputs.credits,
-        damage: inputs.damage,
-        channelRestrictions: inputs.channelRestrictions,
-        rolesAdded: inputs.rolesAdded,
-        rolesRemoved: inputs.rolesRemoved,
-        cannotUseVoiceChannels: inputs.cannotUseVoiceChannels,
-        cannotGiveReputation: inputs.cannotGiveReputation,
-        cannotUseStaffCommand: inputs.cannotUseStaffCommand,
-        cannotUseReportCommand: inputs.cannotUseReportCommand,
-        cannotUseSupportCommand: inputs.cannotUseSupportCommand,
-        cannotUseConflictCommand: inputs.cannotUseConflictCommand,
-        cannotPurchaseAds: inputs.cannotPurchaseAds,
-        cannotEditProfile: inputs.cannotEditProfile,
-        apologies: inputs.apologies,
-        research: inputs.research,
-        retractions: inputs.retractions,
-        quizzes: inputs.quizzes,
-        muteDuration: inputs.muteDuration,
-        banDuration: inputs.banDuration,
-        additionalInformation: inputs.additionalInformation
-      }
-    })
+    Caches.get('moderation').set([ uid ], {
+      userID: inputs.user.id,
+      guildID: inputs.guild.id,
+      type: inputs.type,
+      issuer: inputs.issuer.id,
+      appealed: false,
+      rules: inputs.rules,
+      reason: inputs.reason,
+      XP: inputs.XP,
+      credits: inputs.credits,
+      damage: inputs.damage,
+      channelRestrictions: inputs.channelRestrictions,
+      rolesAdded: inputs.rolesAdded,
+      rolesRemoved: inputs.rolesRemoved,
+      cannotUseVoiceChannels: inputs.cannotUseVoiceChannels,
+      cannotGiveReputation: inputs.cannotGiveReputation,
+      cannotUseStaffCommand: inputs.cannotUseStaffCommand,
+      cannotUseReportCommand: inputs.cannotUseReportCommand,
+      cannotUseSupportCommand: inputs.cannotUseSupportCommand,
+      cannotUseConflictCommand: inputs.cannotUseConflictCommand,
+      cannotPurchaseAds: inputs.cannotPurchaseAds,
+      cannotEditProfile: inputs.cannotEditProfile,
+      apologies: inputs.apologies,
+      research: inputs.research,
+      retractions: inputs.retractions,
+      quizzes: inputs.quizzes,
+      muteDuration: inputs.muteDuration,
+      banDuration: inputs.banDuration,
+      additionalInformation: inputs.additionalInformation
+    });
 
     // Set up a function called for class D discipline and higher
     var classD = () => {
@@ -356,9 +354,7 @@ module.exports = {
         },
         nextRun: moment().add(inputs.muteDuration, 'minutes').toISOString(true)
       });
-      Caches.get('moderation').set([ uid ], () => {
-        return { schedule: uid }
-      })
+      Caches.get('moderation').set([ uid ], { schedule: uid });
     }
 
     // Channel restrictions
@@ -388,11 +384,9 @@ module.exports = {
           if (guildMember) {
             guildMember.roles.add(theRole, `Discipline case ${inputs.case}`);
           } else {
-            Caches.get('members').set([ inputs.user.id, inputs.guild.id ], () => {
-              var roles = inputs.user.guildSettings(inputs.guild.id).roles;
-              roles.push(theRole.id);
-              return { roles: roles }
-            })
+            var roles = inputs.user.guildSettings(inputs.guild.id).roles;
+            roles.push(theRole.id);
+            Caches.get('members').set([ inputs.user.id, inputs.guild.id ], { roles: roles });
           }
         }
       })
@@ -408,11 +402,9 @@ module.exports = {
           if (guildMember) {
             guildMember.roles.remove(theRole, `Discipline case ${inputs.case}`);
           } else {
-            Caches.get('members').set([ inputs.user.id, inputs.guild.id ], () => {
-              var roles = inputs.user.guildSettings(inputs.guild.id).roles;
-              roles = roles.filter((role) => role.id !== theRole.id)
-              return { roles: roles }
-            })
+            var roles = inputs.user.guildSettings(inputs.guild.id).roles;
+            roles = roles.filter((role) => role.id !== theRole.id)
+            Caches.get('members').set([ inputs.user.id, inputs.guild.id ], { roles: roles });
           }
         }
       })
@@ -455,9 +447,7 @@ module.exports = {
     // remove XP
     if (inputs.XP > 0) {
       msg.addField(`:fleur_de_lis: **${inputs.XP} XP has been retracted from you**`, `You now have ${(inputs.user.guildSettings(inputs.guild.id).XP - inputs.XP)} XP.`);
-      Caches.get('members').set([ inputs.user.id, inputs.guild.id ], () => {
-        return { XP: inputs.user.guildSettings(inputs.guild.id).XP - inputs.XP };
-      })
+      Caches.get('members').set([ inputs.user.id, inputs.guild.id ], { XP: inputs.user.guildSettings(inputs.guild.id).XP - inputs.XP });
 
       if (guildMember)
         await sails.helpers.xp.checkRoles(guildMember);
@@ -466,9 +456,7 @@ module.exports = {
     // remove credits
     if (inputs.credits > 0) {
       msg.addField(`:gem: **You were fined $${inputs.credits / 100} SRD**`, `You now have $${(inputs.user.guildSettings(inputs.guild.id).credits - inputs.credits) / 100} SRD.`);
-      Caches.get('members').set([ inputs.user.id, inputs.guild.id ], () => {
-        return { credits: inputs.user.guildSettings(inputs.guild.id).credits - inputs.credits };
-      })
+      Caches.get('members').set([ inputs.user.id, inputs.guild.id ], { credits: inputs.user.guildSettings(inputs.guild.id).credits - inputs.credits });
     }
 
     // HP damage
@@ -480,9 +468,7 @@ module.exports = {
       } else {
         msg.addField(`:broken_heart: **You were given ${inputs.damage} HP damage**`, `You now have ${HP} HP.` + "\n" + `Bans are not considered / issued except for violations of the zero tolerance policy unless you lose all your HP. You will regenerate 1 HP for every ${inputs.guild.settings.XPForOneHP} XP you earn.`);
       }
-      Caches.get('members').set([ inputs.user.id, inputs.guild.id ], () => {
-        return { damage: inputs.user.guildSettings(inputs.guild.id).damage + inputs.damage };
-      })
+      Caches.get('members').set([ inputs.user.id, inputs.guild.id ], { damage: inputs.user.guildSettings(inputs.guild.id).damage + inputs.damage });
     }
 
     // Additional info
@@ -496,9 +482,7 @@ module.exports = {
         // Apply the ban
         await inputs.guild.members.ban(inputs.user, { days: 7, reason: inputs.reason });
         if ((!inputs.apologies && !inputs.research && !inputs.retraction && !inputs.quizzes) || inputs.banDuration === 0) {
-          Caches.get('members').set([ inputs.user.id, inputs.guild.id ], () => {
-            return { muted: false };
-          })
+          Caches.get('members').set([ inputs.user.id, inputs.guild.id ], { muted: false });
         }
 
         // Add a schedule if the ban is limited duration
@@ -512,9 +496,7 @@ module.exports = {
             },
             nextRun: moment().add(inputs.banDuration, 'days').toISOString(true)
           });
-          Caches.get('moderation').set([ uid ], () => {
-            return { schedule: uid }
-          })
+          Caches.get('moderation').set([ uid ], { schedule: uid });
         }
       }
     }

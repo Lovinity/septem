@@ -11,13 +11,15 @@
 
 // Globals
 global[ 'Discord' ] = require('discord.js');
-global[ 'moment' ] = require('moment');
+global[ 'moment' ] = require('moment-timezone');
 require('moment-duration-format');
 var CacheManager = require('../util/Cache');
 global[ 'Caches' ] = new CacheManager();
 global[ 'Schedules' ] = {};
 
 module.exports.bootstrap = async function () {
+  // Set default moment timezone to UTC.
+  moment.tz.setDefault("UTC");
 
   /*
       DISCORD Discord.Structures AND CACHES
