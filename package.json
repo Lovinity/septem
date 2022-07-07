@@ -14,7 +14,7 @@
     "diff": "^4.0.2",
     "discord.js": "^12.1.1",
     "grunt": "1.0.4",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "moment-duration-format": "^2.3.2",
     "moment-timezone": "^0.5.31",
     "mysql-cache": "^2.1.2",
